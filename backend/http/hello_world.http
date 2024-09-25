@@ -2,41 +2,34 @@ GET http://localhost:3000/ads
 
 ####
 
+GET http://localhost:3000/ads?location=Toulouse
+
+
+####
+
 POST http://localhost:3000/ads
 Content-Type: application/json
 
 {
-       "id": 3,
-        "title": "Motor Bike to sell",
+        "title": "Printer",
         "description":
-          "My bike is red, working fine. I'm selling it because I've got a new one",
+          "My printer is factory new, working fine. I'm selling it because I've got a new one",
         "owner": "bike.seller@gmail.com",
-        "price": 5500,
+        "price": 350,
         "picture":
           "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
         "location": "Toulouse",
-        "createdAt": "2023-09-05T10:13:14.755Z"
+        "createdAT": "2023-09-05T10:13:14.755Z"
 }
 
 ####
 
-DELETE http://localhost:3000/ads/2
+DELETE http://localhost:3000/ads/23
 
 ####
 PUT http://localhost:3000/ads/3
 Content-Type: application/json
 
 {
-       "newAd": {
-        "id":  3,
-        "title": "Motor Bike to sell",
-        "description":
-          "My bike is orange, working fine. I'm selling it because I've got a new one",
-        "owner": "bike.seller@gmail.com",
-        "price": 7500,
-        "picture":
-          "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
-        "location": "Toulouse",
-        "createdAt": "2023-09-05T10:13:14.755Z"
-        }
+        "price": 8000
 }
