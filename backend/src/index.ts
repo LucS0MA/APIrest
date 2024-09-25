@@ -43,7 +43,7 @@ app.use(express.json());
   
 
 app.post("/ads", (req, res) => {
-  const stmt = db.prepare("INSERT INTO ads (title, description, owner, price, picture, location, createdAT) VALUES (?, ?, ?, ?, ?, ?, ?)"
+  const stmt = db.prepare("INSERT INTO ads (title, description, owner, price, picture, location, createdAT, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
   );
   stmt.run([
     req.body.title,
@@ -52,7 +52,8 @@ app.post("/ads", (req, res) => {
     req.body.price,
     req.body.picture,
     req.body.location,
-    req.body.createdAT
+    req.body.createdAT,
+    req.body.category_id
   ])
     res.send("Request received, check the backend terminal");
   });
@@ -70,7 +71,7 @@ app.put("/ads/:id", (req, res) => {
     req.params.id,
     (_err, data: any) => {
       const stmt = db.prepare(
-        "UPDATE ads SET title = ?, description = ?, owner = ?, price = ?, picture = ?, location = ?, createdAT = ? WHERE id = ?"
+        "UPDATE ads SET title = ?, description = ?, owner = ?, price = ?, picture = ?, location = ?, createdAT = ?, category_id = ? WHERE id = ?"
       );
       stmt.run([
         req.body.title ? req.body.title : data.title,
@@ -80,6 +81,7 @@ app.put("/ads/:id", (req, res) => {
         req.body.picture ? req.body.picture : data.picture,
         req.body.location ? req.body.location : data.location,
         req.body.createdAT ? req.body.createdAT : data.createdAT,
+        req.body.category_id ? req.body.category_id : data.category_id,
         req.params.id
       ]);
       res.status(200).send("Ad updated successfully");

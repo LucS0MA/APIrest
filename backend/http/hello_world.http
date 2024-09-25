@@ -2,7 +2,7 @@ GET http://localhost:3000/ads
 
 ####
 
-GET http://localhost:3000/ads?location=Toulouse
+GET http://localhost:3000/ads?location=Paris
 
 
 ####
@@ -19,17 +19,18 @@ Content-Type: application/json
         "picture":
           "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
         "location": "Toulouse",
-        "createdAT": "2023-09-05T10:13:14.755Z"
+        "createdAT": "2023-09-05T10:13:14.755Z",
+        "category_id": 3
 }
 
 ####
 
-DELETE http://localhost:3000/ads/23
+DELETE http://localhost:3000/ads/21
 
 ####
-PUT http://localhost:3000/ads/3
+PUT http://localhost:3000/ads/22
 Content-Type: application/json
 
 {
-        "price": 8000
+        "price": 150
 }
