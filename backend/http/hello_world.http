@@ -13,24 +13,24 @@ Content-Type: application/json
 {
         "title": "Printer",
         "description":
-          "My printer is factory new, working fine. I'm selling it because I've got a new one",
+          "My print",
         "owner": "bike.seller@gmail.com",
         "price": 350,
         "picture":
           "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
         "location": "Toulouse",
-        "createdAT": "2023-09-05T10:13:14.755Z",
+        "createdAt": "2023-09-05T10:13:14.755Z",
         "category_id": 3
 }
 
 ####
 
-DELETE http://localhost:3000/ads/21
+DELETE http://localhost:3000/ads/19
 
 ####
-PUT http://localhost:3000/ads/22
+PUT http://localhost:3000/ads/20
 Content-Type: application/json
 
 {
-        "price": 150
+        "price": 50
 }
