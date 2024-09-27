@@ -2,7 +2,7 @@ GET http://localhost:3000/ad
 
 ####
 
-GET http://localhost:3000/ad?tag=Promotion
+GET http://localhost:3000/ad?category=vêtement
 
 ####
 
@@ -10,11 +10,11 @@ POST http://localhost:3000/ad
 Content-Type: application/json
 
 {
-        "title": "Chaise",
+        "title": "Manette Xbox",
         "description":
-          "My Chaise working fine",
+          "Ma Manette Xbox working fine",
         "owner": "bike.seller@gmail.com",
-        "price": 75,
+        "price": 40,
         "picture":
           "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
         "location": "Toulouse",
@@ -25,12 +25,12 @@ Content-Type: application/json
 
 ####
 
-DELETE http://localhost:3000/ad/22
+DELETE http://localhost:3000/ad/25
 
 ####
-PUT http://localhost:3000/ad/18
+PUT http://localhost:3000/ad/24
 Content-Type: application/json
 
 {
-  "tag": [{"id": 3}]
+  "tag": [{"id": 1}, {"id": 2}, {"id": 3}]
 }

@@ -45,7 +45,9 @@ res.send(ads);
 app.post("/ad", async (req, res) => {
   console.log("request body", req.body);
   const adToSave = new Ad();
+  if (req.body.tag) {
   adToSave.tag = req.body.tag;
+}
   adToSave.category = req.body.category ? req.body.category: 6;
   adToSave.createdAt = req.body.createdAt;
   adToSave.description = req.body.description;

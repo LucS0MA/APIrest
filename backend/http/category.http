@@ -2,7 +2,7 @@ GET http://localhost:3000/category
 
 ####
 
-GET http://localhost:3000/category?title=vê
+GET http://localhost:3000/category?title=m
 
 ####
 
@@ -15,13 +15,13 @@ Content-Type: application/json
 
 ####
 
-DELETE http://localhost:3000/category/7
+DELETE http://localhost:3000/category/9
 
 ####
 
-PUT http://localhost:3000/category/3
+PUT http://localhost:3000/category/5
 Content-Type: application/json
 
 {
-    "title": "informatique"
+    "title": "meubles"
 }
