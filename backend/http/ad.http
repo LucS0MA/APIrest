@@ -1,0 +1,36 @@
+GET http://localhost:3000/ad
+
+####
+
+GET http://localhost:3000/ad?tag=Promotion
+
+####
+
+POST http://localhost:3000/ad
+Content-Type: application/json
+
+{
+        "title": "Chaise",
+        "description":
+          "My Chaise working fine",
+        "owner": "bike.seller@gmail.com",
+        "price": 75,
+        "picture":
+          "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
+        "location": "Toulouse",
+        "createdAt": "2023-09-05T10:13:14.755Z",
+        "category": 5,
+        "tag": [{"id": 1}, {"id": 2}]
+}
+
+####
+
+DELETE http://localhost:3000/ad/22
+
+####
+PUT http://localhost:3000/ad/18
+Content-Type: application/json
+
+{
+  "tag": [{"id": 3}]
+}

@@ -2,8 +2,9 @@ import "reflect-metadata";
 import { dataSourceGoodCorner } from "./config/db";
 import express from "express";
 import { Like } from "typeorm";
-import { Ads } from "./entities/Ads";
+import { Ad } from "./entities/Ad";
 import { Category } from "./entities/Category";
+import { Tag } from "./entities/Tag";
 import { validate } from "class-validator";
 
 const app = express();
@@ -11,25 +12,40 @@ const port = 3000;
 
 app.use(express.json());
 
-/* ADS ROUTES */
+/* ADS ANNONCES ROUTES */
 
-app.get("/ads", async (req, res) => {
-  const categoryFilter = req.query.category || "";
-  const ads = await Ads.find({
-    relations: ["category"],
+
+ /* GET   ------------------ */
+
+
+app.get("/ad", async (req, res) => {
+  let ads: Ad[];
+  if (req.query.category || req.query.tag) {
+  ads = await Ad.find({
+    relations: ["category", "tag"],
     where: {
       category: {
-        title: Like(`%${categoryFilter}`),
+        title: req.query.category as string,
+      },
+      tag: {
+        title:req.query.tag as string,
       }
     }
   });
-  res.send(ads);
+}else {
+  ads = await Ad.find({ relations: { category: true, tag: true } });
+}
+res.send(ads);
 });
   
 
-app.post("/ads", async (req, res) => {
+ /* POST   ------------------ */
+
+
+app.post("/ad", async (req, res) => {
   console.log("request body", req.body);
-  const adToSave = new Ads();
+  const adToSave = new Ad();
+  adToSave.tag = req.body.tag;
   adToSave.category = req.body.category ? req.body.category: 6;
   adToSave.createdAt = req.body.createdAt;
   adToSave.description = req.body.description;
@@ -50,10 +66,14 @@ app.post("/ads", async (req, res) => {
   }
 });
 
-app.delete("/ads/:id", async (req, res) => {
+
+ /* DELETE   ------------------ */
+
+
+app.delete("/ad/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    await Ads.delete({id});
+    await Ad.delete({id});
     res.send("The ad was deleted");
   } catch(err) {
     console.log(err);
@@ -62,9 +82,12 @@ app.delete("/ads/:id", async (req, res) => {
 });
 
 
-app.put("/ads/:id", async (req, res) => {
+ /* PUT   ------------------ */
+
+
+app.put("/ad/:id", async (req, res) => {
   try {
-    let AdToUpdate = await Ads.findOneByOrFail({id: parseInt(req.params.id)});
+    let AdToUpdate = await Ad.findOneByOrFail({id: parseInt(req.params.id)});
     AdToUpdate = Object.assign(AdToUpdate, req.body);
     const result = await AdToUpdate.save();
     console.log(result)
@@ -76,17 +99,29 @@ app.put("/ads/:id", async (req, res) => {
     }
   );
 
-  /* CATEGORY ROUTES */
+  /* CATEGORY CATEGORIES ROUTES */
+
+
+ /* GET   ------------------ */
+
 
 app.get("/category", async (req, res) => {
-  const titleFilter = req.query.title || "";
-  const categories = await Category.find({
+  let categories: Category[];
+  if(req.query.title) {
+  categories = await Category.find({
     where: {
-      title: Like(`%${titleFilter}`),
+      title: Like(`${req.query.title as string}%`),
     }
   });
-  res.send(categories);
+} else {
+  categories = await Category.find()
+}
+res.send(categories);
 });
+
+
+ /* POST   ------------------ */
+
 
 app.post("/category", async (req, res) => {
   console.log("request body", req.body);
@@ -104,6 +139,10 @@ app.post("/category", async (req, res) => {
   }
 });
 
+
+ /* DELETE   ------------------ */
+
+
 app.delete("/category/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -114,6 +153,10 @@ app.delete("/category/:id", async (req, res) => {
     res.status(400).send("an error has occured")
   }
 });
+
+
+ /* PUT   ------------------ */
+
 
 app.put("/category/:id", async (req, res) => {
   try {
@@ -130,6 +173,83 @@ app.put("/category/:id", async (req, res) => {
   );
 
 
+  /* TAG  ETIQUETTES ROUTES */
+
+
+ /* GET   ------------------ */
+
+
+  app.get("/tag", async (req, res) => {
+    let tags: Tag[];
+    if(req.query.title) {
+      tags = await Tag.find({
+      where: {
+        title: Like(`${req.query.title as string}%`),
+      }
+    });
+  } else {
+    tags = await Tag.find()
+  }
+  res.send(tags);
+  });
+
+
+/* POST   ------------------ */
+
+  
+     app.post("/tag", async (req, res) => {
+      console.log("request body", req.body);
+      const tagToSave = new Tag();
+      tagToSave.title = req.body.title;
+    
+      const errors = await validate(tagToSave);
+      if (errors.length > 0) {
+        console.log(errors);
+        // throw new Error("Validation failed");
+        res.status(400).send("Invalid input");
+      } else {
+        const result = await tagToSave.save();
+        res.send(result);
+      }
+    });
+
+
+   /* DELETE   ------------------ */
+
+
+  app.delete("/tag/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await Tag.delete({id});
+      res.send("The Tag was deleted");
+    } catch(err) {
+      console.log(err);
+      res.status(400).send("an error has occured")
+    }
+  });
+
+
+  /* PUT   ------------------ */
+
+
+  app.put("/tag/:id", async (req, res) => {
+    try {
+      let TagToUpdate = await Tag.findOneByOrFail({id: parseInt(req.params.id)});
+      TagToUpdate = Object.assign(TagToUpdate, req.body);
+      const result = await TagToUpdate.save();
+      console.log(result)
+      res.send("Tag has been updated")
+    } catch (err) {
+      console.log(err);
+      res.status(400).send("an error has occured")
+    }
+      }
+    );
+
+
+
+
+  /* LISTEN PORT */
 
 app.listen(port, async () => {
   await dataSourceGoodCorner.initialize();

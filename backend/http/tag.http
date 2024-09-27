@@ -1,0 +1,27 @@
+GET http://localhost:3000/tag
+
+####
+
+GET http://localhost:3000/tag?title=p
+
+####
+
+POST http://localhost:3000/tag
+Content-Type: application/json
+
+{
+    "title": "test"
+}
+
+####
+
+DELETE http://localhost:3000/tag/4
+
+####
+
+PUT http://localhost:3000/tag/3
+Content-Type: application/json
+
+{
+    "title": "Echange Possible"
+}

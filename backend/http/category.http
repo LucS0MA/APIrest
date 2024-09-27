@@ -2,7 +2,7 @@ GET http://localhost:3000/category
 
 ####
 
-GET http://localhost:3000/category?title=autres
+GET http://localhost:3000/category?title=vê
 
 ####
 
@@ -10,12 +10,12 @@ POST http://localhost:3000/category
 Content-Type: application/json
 
 {
-    "title": "autres"
+    "title": "électro-ménager"
 }
 
 ####
 
-DELETE http://localhost:3000/category/4
+DELETE http://localhost:3000/category/7
 
 ####
 
