@@ -1,0 +1,27 @@
+GET http://localhost:3000/category
+
+####
+
+GET http://localhost:3000/category?title=autres
+
+####
+
+POST http://localhost:3000/category
+Content-Type: application/json
+
+{
+    "title": "autres"
+}
+
+####
+
+DELETE http://localhost:3000/category/4
+
+####
+
+PUT http://localhost:3000/category/3
+Content-Type: application/json
+
+{
+    "title": "informatique"
+}
