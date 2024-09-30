@@ -1,4 +1,3 @@
-// Définir l'interface des props
 export interface AdCardProps {
   title: string;
   imgUrl: string;
