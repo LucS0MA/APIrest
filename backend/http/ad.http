@@ -28,9 +28,9 @@ Content-Type: application/json
 DELETE http://localhost:3000/ad/25
 
 ####
-PUT http://localhost:3000/ad/24
+PUT http://localhost:3000/ad/16
 Content-Type: application/json
 
 {
-  "tag": [{"id": 1}, {"id": 2}, {"id": 3}]
+  "picture": "https://m.media-amazon.com/images/I/71PFaWU6AaL._AC_UF1000,1000_QL80_.jpg"
 }
