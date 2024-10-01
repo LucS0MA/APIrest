@@ -25,12 +25,12 @@ Content-Type: application/json
 
 ####
 
-DELETE http://localhost:3000/ad/25
+DELETE http://localhost:3000/ad/2
 
 ####
-PUT http://localhost:3000/ad/16
+PUT http://localhost:3000/ad/12
 Content-Type: application/json
 
 {
-  "picture": "https://m.media-amazon.com/images/I/71PFaWU6AaL._AC_UF1000,1000_QL80_.jpg"
+    "category": 5
 }
