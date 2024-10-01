@@ -1,9 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Layout from "./pages/layout";
-import About from "./pages/about";
+import Layout from "./pages/Layout";
+import About from "./pages/About";
 import Home from "./pages/Home";
 import AdDetails from "./pages/AdDetails";
+import NewAdForm from "./pages/NewAdForm";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/ad/:id" element={<AdDetails />} />
+          <Route path="/new" element={<NewAdForm />} />
         </Route>
       </Routes>
     </>
