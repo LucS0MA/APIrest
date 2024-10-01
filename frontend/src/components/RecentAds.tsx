@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdCard, { AdCardProps } from "./AdCard";
+import axios from "axios";
 
 function RecentAds() {
-  const ads: AdCardProps[] = [
+  const adsList: AdCardProps[] = [
     {
       imgUrl: "/images/table.webp",
       title: "Table",
@@ -42,7 +43,24 @@ function RecentAds() {
   ];
 
   const [total, setTotal] = useState(0);
-  const [addCount, setAddCount] = useState(Array(ads.length).fill(0));
+  const [ads, setAds] = useState<AdCardProps[]>([]);
+  const [addCount, setAddCount] = useState(Array(adsList.length).fill(0));
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios.get<AdCardProps[]>(
+          "http://localhost:3000/ad"
+        );
+        setAds(result.data);
+      } catch (err) {
+        console.log("error", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  console.log(ads);
 
   const handleAddTotal = (index: number, price: number) => {
     setTotal(total + price);
@@ -65,9 +83,8 @@ function RecentAds() {
       </button>
       <section className="recent-ads">
         {ads.map((ad, index) => (
-          <div>
+          <div key={ad.title}>
             <AdCard
-              key={ad.title}
               imgUrl={ad.imgUrl}
               title={ad.title}
               link={ad.link}
