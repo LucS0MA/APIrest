@@ -1,47 +1,25 @@
+import { useEffect, useState } from "react";
 import Categories, { CategoriesProps } from "./Categories";
+import axios from "axios";
 
 function Header() {
-  const cats: CategoriesProps[] = [
-    {
-      title: "Ameublement",
-    },
-    {
-      title: "Électroménager",
-    },
-    {
-      title: "Photographie",
-    },
-    {
-      title: "Informatique",
-    },
-    {
-      title: "Téléphonie",
-    },
-    {
-      title: "Vélos",
-    },
-    {
-      title: "Véhicules",
-    },
-    {
-      title: "Sport",
-    },
-    {
-      title: "Habillement",
-    },
-    {
-      title: "Bébé",
-    },
-    {
-      title: "Outillage",
-    },
-    {
-      title: "Services",
-    },
-    {
-      title: "Vacances",
-    },
-  ];
+  const [categories, setCategories] = useState<CategoriesProps[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const result = await axios.get<CategoriesProps[]>(
+          "http://localhost:3000/category"
+        );
+        setCategories(result.data);
+      } catch (err) {
+        console.log("error", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  console.log(categories);
 
   return (
     <header className="header">
@@ -76,8 +54,8 @@ function Header() {
         </a>
       </div>
       <nav className="categories-navigation">
-        {cats.map((cat) => (
-          <Categories key={cat.title} title={cat.title} />
+        {categories.map((cat) => (
+          <Categories key={cat.id} title={cat.title} id={cat.id} />
         ))}
       </nav>
     </header>

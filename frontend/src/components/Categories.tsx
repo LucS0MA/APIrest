@@ -1,4 +1,5 @@
 export interface CategoriesProps {
+  id: number;
   title: string;
 }
 

@@ -3,45 +3,6 @@ import AdCard, { AdCardProps } from "./AdCard";
 import axios from "axios";
 
 function RecentAds() {
-  // const adsList: AdCardProps[] = [
-  //   {
-  //     imgUrl: "/images/table.webp",
-  //     title: "Table",
-  //     link: "/ads/table",
-  //     price: 120,
-  //   },
-  //   {
-  //     imgUrl: "/images/bougie.webp",
-  //     title: "Bougie",
-  //     link: "/ads/bougie",
-  //     price: 8,
-  //   },
-  //   {
-  //     imgUrl: "/images/dame-jeanne.webp",
-  //     title: "Dame-jeanne",
-  //     link: "/ads/dame-jeanne",
-  //     price: 75,
-  //   },
-  //   {
-  //     imgUrl: "/images/porte-magazine.webp",
-  //     title: "Porte-magazine",
-  //     link: "/ads/porte-magazine",
-  //     price: 45,
-  //   },
-  //   {
-  //     imgUrl: "/images/vaisselier.webp",
-  //     title: "Vaisselier",
-  //     link: "/ads/vaisselier",
-  //     price: 900,
-  //   },
-  //   {
-  //     imgUrl: "/images/vide-poche.webp",
-  //     title: "Vide-poche",
-  //     link: "/ads/vide-poche",
-  //     price: 4,
-  //   },
-  // ];
-
   const [total, setTotal] = useState(0);
   const [ads, setAds] = useState<AdCardProps[]>([]);
 
@@ -77,15 +38,21 @@ function RecentAds() {
           <div key={ad.id}>
             <AdCard
               id={ad.id}
-              imgUrl={ad.imgUrl}
+              picture={ad.picture}
               title={ad.title}
               link={ad.link}
+              description={ad.description}
+              location={ad.location}
+              createdAt={ad.createdAt}
+              owner={ad.owner}
+              category={ad.category}
               price={ad.price}
             />
             <button
               onClick={() => {
                 setTotal(total + ad.price);
               }}
+              className="button"
             >
               Add to total
             </button>
