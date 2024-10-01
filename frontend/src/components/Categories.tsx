@@ -8,7 +8,6 @@ function Categories({ title }: CategoriesProps) {
       <a href="" className="category-navigation-link">
         {title}
       </a>{" "}
-      •
     </>
   );
 }

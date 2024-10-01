@@ -1,14 +1,20 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Header from "./components/Header";
-import RecentAds from "./components/RecentAds";
+import Layout from "./pages/layout";
+import About from "./pages/about";
+import Home from "./pages/Home";
+import AdDetails from "./pages/AdDetails";
 
 function App() {
   return (
     <>
-      <main className="main-content">
-        <Header />
-        <RecentAds />
-      </main>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/ad/:id" element={<AdDetails />} />
+        </Route>
+      </Routes>
     </>
   );
 }

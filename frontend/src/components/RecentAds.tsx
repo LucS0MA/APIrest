@@ -1,3 +1,4 @@
+import { useState } from "react";
 import AdCard, { AdCardProps } from "./AdCard";
 
 function RecentAds() {
@@ -39,18 +40,48 @@ function RecentAds() {
       price: 4,
     },
   ];
+
+  const [total, setTotal] = useState(0);
+  const [addCount, setAddCount] = useState(Array(ads.length).fill(0));
+
+  const handleAddTotal = (index: number, price: number) => {
+    setTotal(total + price);
+    const newAddCount = [...addCount];
+    newAddCount[index] += 1;
+    setAddCount(newAddCount);
+  };
+
   return (
     <>
       <h2>Annonces récentes</h2>
+      <p>Total : {total} €</p>
+      <button
+        onClick={() => {
+          setTotal(0);
+          setAddCount(Array(ads.length).fill(0));
+        }}
+      >
+        Vider total
+      </button>
       <section className="recent-ads">
-        {ads.map((ad) => (
-          <AdCard
-            key={ad.title}
-            imgUrl={ad.imgUrl}
-            title={ad.title}
-            link={ad.link}
-            price={ad.price}
-          />
+        {ads.map((ad, index) => (
+          <div>
+            <AdCard
+              key={ad.title}
+              imgUrl={ad.imgUrl}
+              title={ad.title}
+              link={ad.link}
+              price={ad.price}
+            />
+            <button
+              onClick={() => {
+                handleAddTotal(index, ad.price);
+              }}
+            >
+              Add to total
+            </button>
+            <p>Ajouté {addCount[index]} fois</p>
+          </div>
         ))}
       </section>
     </>
