@@ -1,4 +1,13 @@
-import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+} from "typeorm";
 import { MinLength } from "class-validator";
 import { Category } from "./Category";
 import { Tag } from "./Tag";
@@ -12,7 +21,7 @@ export class Ad extends BaseEntity {
   title: string;
 
   @Column()
-  @MinLength(10, { message: "Minimun de 10 caractères"})
+  @MinLength(10, { message: "Minimun de 10 caractères" })
   description: string;
 
   @Column()
@@ -27,14 +36,13 @@ export class Ad extends BaseEntity {
   @Column()
   location: string;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Category, category => category.ads)
+  @ManyToOne(() => Category, (category) => category.ads)
   category: Category;
 
-  
-@ManyToMany(() => Tag)
-@JoinTable()
-tag: Tag[];
+  @ManyToMany(() => Tag)
+  @JoinTable()
+  tag: Tag[];
 }
