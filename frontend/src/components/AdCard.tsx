@@ -9,7 +9,7 @@ export interface AdCardProps {
   location: string;
   createdAt: string;
   owner: string;
-  category: { title: string };
+  category: { title: string; id: number };
 }
 
 function AdCard({ title, picture, price, category, id }: AdCardProps) {

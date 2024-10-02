@@ -17,7 +17,7 @@ interface FormInputs {
 
 function AdModification() {
   const { id } = useParams();
-  const [ads, setAds] = useState([] as AdCardProps[]);
+  const [ads, setAds] = useState({} as AdCardProps);
   const [categories, setCategories] = useState<CategoriesProps[]>([]);
 
   useEffect(() => {
@@ -64,7 +64,12 @@ function AdModification() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>
           Titre de l'annonce : <br />
-          <input className="text-field" type="text" {...register("title")} />
+          <input
+            className="text-field"
+            type="text"
+            {...register("title")}
+            placeholder={ads.title}
+          />
           {errors.title && <span>{errors.title.message}</span>}
         </label>
         <br />
@@ -74,31 +79,52 @@ function AdModification() {
             className="text-field"
             type="text"
             {...register("description")}
+            placeholder={ads.description}
           />
           {errors.description && <span>{errors.description.message}</span>}
         </label>
         <br />
         <label>
           Localisation : <br />
-          <input className="text-field" type="text" {...register("location")} />
+          <input
+            className="text-field"
+            type="text"
+            {...register("location")}
+            placeholder={ads.location}
+          />
           {errors.location && <span>{errors.location.message}</span>}
         </label>
         <br />
         <label>
           Vendeur : <br />
-          <input className="text-field" type="text" {...register("owner")} />
+          <input
+            className="text-field"
+            type="text"
+            {...register("owner")}
+            placeholder={ads.owner}
+          />
           {errors.owner && <span>{errors.owner.message}</span>}
         </label>
         <br />
         <label>
           Image : <br />
-          <input className="text-field" type="text" {...register("picture")} />
+          <input
+            className="text-field"
+            type="text"
+            {...register("picture")}
+            placeholder={ads.picture}
+          />
           {errors.picture && <span>{errors.picture.message}</span>}
         </label>
         <br />
         <label>
           Prix : <br />
-          <input className="text-field" type="number" {...register("price")} />
+          <input
+            className="text-field"
+            type="number"
+            {...register("price")}
+            placeholder={String(ads.price)}
+          />
           {errors.price && <span>{errors.price.message}</span>}
         </label>
         <br />
