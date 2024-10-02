@@ -17,23 +17,64 @@ app.use(express.json());
 
 /* GET   ------------------ */
 
-app.get("/ad", async (req, res) => {
+app.get("/ad", async (_req, res) => {
   let ads: Ad[];
-  if (req.query.category || req.query.tag) {
+  ads = await Ad.find({ relations: { category: true, tag: true } });
+  res.send(ads);
+});
+
+app.get("/ad/title", async (req, res) => {
+  let ads: Ad[];
+
+  if (req.query.title) {
+    ads = await Ad.find({
+      relations: ["category", "tag"],
+      where: {
+        title: Like(`${req.query.title as string}%`),
+      },
+    });
+  } else {
+    ads = await Ad.find({ relations: ["category", "tag"] });
+  }
+
+  res.send(ads);
+});
+
+app.get("/ad/category", async (req, res) => {
+  let ads: Ad[];
+
+  if (req.query.category) {
     ads = await Ad.find({
       relations: ["category", "tag"],
       where: {
         category: {
           title: req.query.category as string,
         },
+      },
+    });
+  } else {
+    ads = await Ad.find({ relations: ["category", "tag"] });
+  }
+
+  res.send(ads);
+});
+
+app.get("/ad/tag", async (req, res) => {
+  let ads: Ad[];
+
+  if (req.query.tag) {
+    ads = await Ad.find({
+      relations: ["category", "tag"],
+      where: {
         tag: {
           title: req.query.tag as string,
         },
       },
     });
   } else {
-    ads = await Ad.find({ relations: { category: true, tag: true } });
+    ads = await Ad.find({ relations: ["category", "tag"] });
   }
+
   res.send(ads);
 });
 

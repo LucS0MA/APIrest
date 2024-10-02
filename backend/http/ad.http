@@ -2,11 +2,19 @@ GET http://localhost:3000/ad
 
 ####
 
-GET http://localhost:3000/ad/3
+GET http://localhost:3000/ad/title?title=poul
 
 ####
 
-GET http://localhost:3000/ad?category=vêtement
+GET http://localhost:3000/ad/category?category=voiture
+
+####
+
+GET http://localhost:3000/ad/tag?tag=Promotion
+
+####
+
+GET http://localhost:3000/ad?category=voiture
 
 ####
 
