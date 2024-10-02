@@ -5,12 +5,12 @@ import axios from "axios";
 
 function AdDetails() {
   const { id } = useParams<{ id: string }>();
-  const [adDetail, setAdDetail] = useState<AdCardProps[]>([]);
+  const [adDetail, setAdDetail] = useState<AdCardProps | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get<AdCardProps[]>(
+        const result = await axios.get<AdCardProps>(
           `http://localhost:3000/ad/${id}`
         );
         setAdDetail(result.data);
@@ -21,26 +21,35 @@ function AdDetails() {
     fetchData();
   }, [id]);
 
-  console.log(adDetail);
+  if (!adDetail) {
+    return <div>Loading...</div>;
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
     <main className="main-content">
-      <h2 className="ad-details-title">Ad {id}</h2>
+      <h2 className="ad-details-title">{adDetail.title}</h2>
       <section className="ad-details">
         <div className="ad-details-image-container">
-          <img className="ad-details-image" src="/images/table.webp" />
+          <img className="ad-details-image" src={adDetail.picture} />
         </div>
         <div className="ad-details-info">
-          <div className="ad-details-price">120 €</div>
-          <div className="ad-details-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Non, iusto!
-            Voluptates repudiandae asperiores quia. Blanditiis repellat minima
-            adipisci, aliquam nulla unde quam architecto eligendi, voluptatum,
-            perspiciatis laudantium sed eos voluptates?
-          </div>
+          <div className="ad-details-price">{adDetail.price} €</div>
+          <div className="ad-details-description">{adDetail.description}</div>
           <hr className="separator" />
           <div className="ad-details-owner">
-            Annoncée publiée par <b>Serge</b> aujourd'hui (9:32).
+            Annoncée publiée par <b>{adDetail.owner}</b>{" "}
+            {formatDate(adDetail.createdAt)}.
           </div>
           <a
             href="mailto:serge@serge.com"
