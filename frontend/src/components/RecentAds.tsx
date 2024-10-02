@@ -4,14 +4,12 @@ import axios from "axios";
 
 function RecentAds() {
   const [total, setTotal] = useState(0);
-  const [ads, setAds] = useState<AdCardProps[]>([]);
+  const [ads, setAds] = useState([] as AdCardProps[]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get<AdCardProps[]>(
-          "http://localhost:3000/ad"
-        );
+        const result = await axios.get("http://localhost:3000/ad");
         setAds(result.data);
       } catch (err) {
         console.log("error", err);

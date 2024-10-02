@@ -3,14 +3,12 @@ import Categories, { CategoriesProps } from "./Categories";
 import axios from "axios";
 
 function Header() {
-  const [categories, setCategories] = useState<CategoriesProps[]>([]);
+  const [categories, setCategories] = useState([] as CategoriesProps[]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const result = await axios.get<CategoriesProps[]>(
-          "http://localhost:3000/category"
-        );
+        const result = await axios.get("http://localhost:3000/category");
         setCategories(result.data);
       } catch (err) {
         console.log("error", err);

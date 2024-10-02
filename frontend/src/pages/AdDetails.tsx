@@ -4,36 +4,30 @@ import { AdCardProps } from "../components/AdCard";
 import axios from "axios";
 
 function AdDetails() {
-  const { id } = useParams<{ id: string }>();
-  const [adDetail, setAdDetail] = useState<AdCardProps | null>(null);
+  const { id } = useParams();
+  const [adDetail, setAdDetail] = useState({} as AdCardProps);
   const [adDeleted, setAdDeleted] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDataDetails = async () => {
       try {
-        const result = await axios.get<AdCardProps>(
-          `http://localhost:3000/ad/${id}`
-        );
+        const result = await axios.get(`http://localhost:3000/ad/${id}`);
         setAdDetail(result.data);
       } catch (err) {
         console.log("error", err);
       }
     };
-    fetchData();
+    fetchDataDetails();
   }, [id]);
 
   const deleteAd = async () => {
     try {
-      await axios.delete<AdCardProps>(`http://localhost:3000/ad/${id}`);
+      await axios.delete(`http://localhost:3000/ad/${id}`);
       setAdDeleted(!adDeleted);
     } catch (err) {
       console.log("error", err);
     }
   };
-
-  if (!adDetail) {
-    return <div>Loading...</div>;
-  }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -84,11 +78,11 @@ function AdDetails() {
                 </svg>
                 Envoyer un email
               </a>
-              <button className="button" onClick={deleteAd}>
-                Supprimer l'annonce
-              </button>
             </div>
           </section>
+          <button className="button" onClick={deleteAd}>
+            Supprimer l'annonce
+          </button>
         </main>
       )}
     </>
