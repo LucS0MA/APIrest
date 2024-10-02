@@ -2,6 +2,10 @@ GET http://localhost:3000/ad
 
 ####
 
+GET http://localhost:3000/ad/3
+
+####
+
 GET http://localhost:3000/ad?category=vêtement
 
 ####
@@ -28,9 +32,9 @@ Content-Type: application/json
 DELETE http://localhost:3000/ad/2
 
 ####
-PUT http://localhost:3000/ad/12
+PUT http://localhost:3000/ad/1
 Content-Type: application/json
 
 {
-    "category": 5
+    "picture": "https://www.cube-protection.fr/38958-large_default/blouson-a-capuche-hiver-homme-bartlett-carhartt-103826.jpg"
 }

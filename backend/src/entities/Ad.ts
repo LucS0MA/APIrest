@@ -39,7 +39,7 @@ export class Ad extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Category, (category) => category.ads)
+  @ManyToOne(() => Category, (category) => category.ads, { eager: true })
   category: Category;
 
   @ManyToMany(() => Tag)

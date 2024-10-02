@@ -39,11 +39,8 @@ app.get("/ad", async (req, res) => {
 
 app.get("/ad/:id", async (req, res) => {
   try {
-    const adId = parseInt(req.params.id);
-    const theAd = await Ad.findOne({
-      where: { id: adId },
-    });
-    res.send(theAd);
+    const result = await Ad.findOneByOrFail({ id: parseInt(req.params.id) });
+    res.send(result);
   } catch (err) {
     console.log(err);
     res.status(400).send("an error has occured");
