@@ -19,7 +19,10 @@ app.use(express.json());
 
 app.get("/ad", async (_req, res) => {
   let ads: Ad[];
-  ads = await Ad.find({ relations: { category: true, tag: true } });
+  ads = await Ad.find({
+    relations: { category: true, tag: true },
+    order: { id: "DESC" },
+  });
   res.send(ads);
 });
 
@@ -30,11 +33,13 @@ app.get("/ad/title", async (req, res) => {
     ads = await Ad.find({
       relations: ["category", "tag"],
       where: {
-        title: Like(`${req.query.title as string}%`),
+        title: Like(`%${req.query.title as string}%`),
       },
     });
   } else {
-    ads = await Ad.find({ relations: ["category", "tag"] });
+    ads = await Ad.find({
+      relations: ["category", "tag"],
+    });
   }
 
   res.send(ads);
