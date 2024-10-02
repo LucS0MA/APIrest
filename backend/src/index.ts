@@ -37,6 +37,19 @@ app.get("/ad", async (req, res) => {
   res.send(ads);
 });
 
+app.get("/ad/:id", async (req, res) => {
+  try {
+    const adId = parseInt(req.params.id);
+    const theAd = await Ad.findOne({
+      where: { id: adId },
+    });
+    res.send(theAd);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send("an error has occured");
+  }
+});
+
 /* POST   ------------------ */
 
 app.post("/ad", async (req, res) => {
