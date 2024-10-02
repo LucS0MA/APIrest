@@ -5,7 +5,7 @@ import About from "./pages/About";
 import Home from "./pages/Home";
 import AdDetails from "./pages/AdDetails";
 import NewAdForm from "./pages/NewAdForm";
-import NewCategory from "./pages/NewCategory";
+import NewCategoryForm from "./pages/NewCategoryForm";
 
 function App() {
   return (
@@ -15,8 +15,8 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/ad/:id" element={<AdDetails />} />
-          <Route path="/new" element={<NewAdForm />} />
-          <Route path="/newCategory" element={<NewCategory />} />
+          <Route path="/ad/new" element={<NewAdForm />} />
+          <Route path="/category/new" element={<NewCategoryForm />} />
         </Route>
       </Routes>
     </>

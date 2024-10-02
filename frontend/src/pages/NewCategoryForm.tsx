@@ -5,7 +5,7 @@ interface CategoryInputs {
   title: string;
 }
 
-function NewCategory() {
+function NewCategoryForm() {
   const {
     register: registerCategory,
     handleSubmit: handleCategorySubmit,
@@ -39,4 +39,4 @@ function NewCategory() {
   );
 }
 
-export default NewCategory;
+export default NewCategoryForm;
