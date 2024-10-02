@@ -13,10 +13,6 @@ interface FormInputs {
   category: number;
 }
 
-interface CategoryInputs {
-  title: string;
-}
-
 function NewAdForm() {
   const [categories, setCategories] = useState<CategoriesProps[]>([]);
 
@@ -36,24 +32,9 @@ function NewAdForm() {
     formState: { errors },
   } = useForm<FormInputs>();
 
-  const {
-    register: registerCategory,
-    handleSubmit: handleCategorySubmit,
-    formState: { errors: CategoryErrors },
-  } = useForm<CategoryInputs>();
-
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
       const response = await axios.post("http://localhost:3000/ad", data);
-      console.log("data sent :", response.data);
-    } catch (err) {
-      console.log("error data not sent :", err);
-    }
-  };
-
-  const onCategorySubmit: SubmitHandler<CategoryInputs> = async (data) => {
-    try {
-      const response = await axios.post("http://localhost:3000/category", data);
       console.log("data sent :", response.data);
     } catch (err) {
       console.log("error data not sent :", err);
@@ -139,20 +120,6 @@ function NewAdForm() {
           ))}
           {errors.category && <span>{errors.category.message}</span>}
         </select>
-        <button className="button">Submit</button>
-      </form>
-      <form onSubmit={handleCategorySubmit(onCategorySubmit)}>
-        <label>
-          Catégorie : <br />
-          <input
-            className="text-field"
-            type="text"
-            {...registerCategory("title", {
-              required: "titre requis",
-            })}
-          />
-          {CategoryErrors.title && <span>{CategoryErrors.title.message}</span>}
-        </label>
         <button className="button">Submit</button>
       </form>
     </>

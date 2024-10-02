@@ -5,6 +5,7 @@ import About from "./pages/About";
 import Home from "./pages/Home";
 import AdDetails from "./pages/AdDetails";
 import NewAdForm from "./pages/NewAdForm";
+import NewCategory from "./pages/NewCategory";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/ad/:id" element={<AdDetails />} />
           <Route path="/new" element={<NewAdForm />} />
+          <Route path="/newCategory" element={<NewCategory />} />
         </Route>
       </Routes>
     </>
