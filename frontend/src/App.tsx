@@ -6,6 +6,9 @@ import Home from "./pages/Home";
 import AdDetails from "./pages/AdDetails";
 import NewAdForm from "./pages/NewAdForm";
 import NewCategoryForm from "./pages/NewCategoryForm";
+import SearchResultPage from "./pages/SearchResultsPage";
+import SearchCategoryPage from "./pages/SearchCategoryPage";
+import AdModification from "./pages/AdModification";
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
           <Route path="/ad/:id" element={<AdDetails />} />
           <Route path="/ad/new" element={<NewAdForm />} />
           <Route path="/category/new" element={<NewCategoryForm />} />
+          <Route path="/searchAd/:keyword" element={<SearchResultPage />} />
+          <Route path="/searchCat/:keyword" element={<SearchCategoryPage />} />
+          <Route path="/ad/modif/:id" element={<AdModification />} />
         </Route>
       </Routes>
     </>

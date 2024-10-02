@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import Categories, { CategoriesProps } from "./Categories";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
   const [categories, setCategories] = useState([] as CategoriesProps[]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -17,7 +19,20 @@ function Header() {
     fetchCategories();
   }, []);
 
-  console.log(categories);
+  // const handleSearchAd = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (searchQuery.trim()) {
+  //     navigate(`/searchAd/${searchQuery}`);
+  //   }
+  // };
+
+  // const handleSearchCat = (title: string) => {
+  //   if (title.trim()) {
+  //     navigate(`/searchCat/${title}`);
+  //   }
+  // };
+
+  // console.log(searchQuery);
 
   return (
     <header className="header">
@@ -28,8 +43,23 @@ function Header() {
             <span className="desktop-long-label">THE GOOD CORNER</span>
           </a>
         </h1>
-        <form className="text-field-with-button">
-          <input className="text-field main-search-field" type="search" />
+        <form
+          className="text-field-with-button"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form as HTMLFormElement);
+            const formJson = Object.fromEntries(formData.entries());
+            console.log(formJson);
+            navigate(`/searchAd/${formJson.keyword}`);
+          }}
+        >
+          <input
+            className="text-field main-search-field"
+            type="search"
+            placeholder="Rechercher une annonce"
+            name="keyword"
+          />
           <button className="button button-primary">
             <svg
               aria-hidden="true"
@@ -53,7 +83,15 @@ function Header() {
       </div>
       <nav className="categories-navigation">
         {categories.map((cat) => (
-          <Categories key={cat.id} title={cat.title} id={cat.id} />
+          <Categories
+            key={cat.id}
+            title={cat.title}
+            id={cat.id}
+            onClick={() => {
+              navigate(`/searchCat/${cat.title}`);
+              console.log(cat.title);
+            }}
+          />
         ))}
       </nav>
     </header>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { AdCardProps } from "../components/AdCard";
 import axios from "axios";
 
@@ -83,6 +83,14 @@ function AdDetails() {
           <button className="button" onClick={deleteAd}>
             Supprimer l'annonce
           </button>
+          <Link to={`/ad/modif/${id}`}>
+            <button
+              style={{ textDecoration: "none !important" }}
+              className="button"
+            >
+              Modifier l'annonce
+            </button>
+          </Link>
         </main>
       )}
     </>
