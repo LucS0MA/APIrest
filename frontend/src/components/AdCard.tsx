@@ -1,9 +1,10 @@
+import { Link } from "react-router-dom";
+
 export interface AdCardProps {
   id: number;
   title: string;
   picture: string;
   price: number;
-  link: string;
   description: string;
   location: string;
   createdAt: string;
@@ -11,19 +12,19 @@ export interface AdCardProps {
   category: { title: string };
 }
 
-function AdCard({ title, picture, price, link, category }: AdCardProps) {
+function AdCard({ title, picture, price, category, id }: AdCardProps) {
   return (
     <div className="ad-card-container">
-      <a className="ad-card-link" href={link}>
+      <Link className="ad-card-link" to={`/ad/${id}`}>
         <div className="ad-card-text">
           <div className="ad-card-category">{category.title}</div>
         </div>
-        <img className="ad-card-image" src={picture} />
+        <img className="ad-card-image" src={picture} alt={title} />
         <div className="ad-card-text">
           <div className="ad-card-title">{title}</div>
-          <div className="ad-card-price">{price}</div>
+          <div className="ad-card-price">{price} €</div>
         </div>
-      </a>
+      </Link>
     </div>
   );
 }

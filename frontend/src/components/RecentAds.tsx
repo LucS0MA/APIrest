@@ -40,7 +40,6 @@ function RecentAds() {
               id={ad.id}
               picture={ad.picture}
               title={ad.title}
-              link={ad.link}
               description={ad.description}
               location={ad.location}
               createdAt={ad.createdAt}
