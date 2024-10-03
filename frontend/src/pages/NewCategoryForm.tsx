@@ -1,5 +1,7 @@
+import { ErrorMessage } from "@hookform/error-message";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Fragment } from "react/jsx-runtime";
 
 interface CategoryInputs {
   title: string;
@@ -10,7 +12,7 @@ function NewCategoryForm() {
     register: registerCategory,
     handleSubmit: handleCategorySubmit,
     formState: { errors: CategoryErrors },
-  } = useForm<CategoryInputs>();
+  } = useForm<CategoryInputs>({ criteriaMode: "all" });
 
   const onCategorySubmit: SubmitHandler<CategoryInputs> = async (data) => {
     try {
@@ -22,17 +24,35 @@ function NewCategoryForm() {
   };
 
   return (
-    <form onSubmit={handleCategorySubmit(onCategorySubmit)}>
+    <form
+      onSubmit={handleCategorySubmit(onCategorySubmit)}
+      className="newAdForm"
+    >
       <label>
         Nouvelle catégorie : <br />
         <input
-          className="text-field"
+          className="text-field-input"
           type="text"
           {...registerCategory("title", {
             required: "titre requis",
           })}
         />
-        {CategoryErrors.title && <span>{CategoryErrors.title.message}</span>}
+        <ErrorMessage
+          errors={CategoryErrors}
+          name="title"
+          render={({ messages }) =>
+            messages &&
+            Object.entries(messages).map(([type, message]) => {
+              console.log(message);
+              return (
+                <Fragment key={type}>
+                  <br />
+                  <span className="errorRed">{message}</span>
+                </Fragment>
+              );
+            })
+          }
+        />
       </label>
       <button className="button">Submit</button>
     </form>

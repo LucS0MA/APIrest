@@ -96,23 +96,41 @@ h1 {
   font-family: inherit;
 }
 
+.text-field-input {
+  height: 40px;
+  width: 150%;
+  background-color: white;
+  padding: 8px;
+  border: 2px solid #ffa41b;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: inherit;
+}
+
 .link-button {
   text-decoration: none;
 }
 
 .desktop-long-label {
+  font-size: 15px;
   display: none;
 }
 
 .main-content {
   max-width: 832px;
   padding: 0 16px;
-  margin: 120px auto 48px;
+  margin: 130px auto 48px;
+}
+
+.main-content-detail {
+  max-width: 832px;
+  padding: 0 16px;
+  margin: 180px auto 48px;
 }
 
 .recent-ads {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
   gap: 16px;
 }
 
@@ -130,7 +148,37 @@ h1 {
   color: inherit;
 }
 
+.noUnder {
+  text-decoration: none;
+}
+
+.detailButtons {
+  margin-top: 10px;
+  display: flex;
+  gap: 1em;
+}
+
+.border-form {
+  background-color: #ffa41b;
+  padding: 5px;
+  border-radius: 20px;
+}
+
+.newAdForm {
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: white;
+  padding: 20px;
+}
+
+.errorRed {
+  color: red;
+}
+
 .ad-card-image {
+  height: 265px;
   width: 100%;
   border-radius: 8px;
 }
@@ -206,6 +254,9 @@ h1 {
 }
 
 .ad-details-info {
+  background-color: white;
+  padding: 15px;
+  border-radius: 10px;
   display: grid;
   gap: 12px;
   align-content: baseline;

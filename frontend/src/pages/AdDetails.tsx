@@ -50,7 +50,7 @@ function AdDetails() {
       {adDeleted ? (
         <h3>Annonce supprimée</h3>
       ) : (
-        <main className="main-content">
+        <main className="main-content-detail">
           <h2 className="ad-details-title">{adDetail.title}</h2>
           <section className="ad-details">
             <div className="ad-details-image-container">
@@ -85,17 +85,19 @@ function AdDetails() {
               </a>
             </div>
           </section>
-          <button className="button" onClick={deleteAd}>
-            Supprimer l'annonce
-          </button>
-          <Link to={`/ad/modif/${id}`}>
-            <button
-              style={{ textDecoration: "none !important" }}
-              className="button"
-            >
-              Modifier l'annonce
+          <div className="detailButtons">
+            <button className="button" onClick={deleteAd}>
+              Supprimer l'annonce
             </button>
-          </Link>
+            <Link to={`/ad/modif/${id}`} className="noUnder">
+              <a
+                style={{ textDecoration: "none !important" }}
+                className="button"
+              >
+                Modifier l'annonce
+              </a>
+            </Link>
+          </div>
         </main>
       )}
     </>

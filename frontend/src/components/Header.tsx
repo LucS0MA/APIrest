@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Categories, { CategoriesProps } from "./Categories";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import LebIcon from "../assets/LebIcon.svg";
 
 function Header() {
   const [categories, setCategories] = useState([] as CategoriesProps[]);
@@ -24,6 +25,7 @@ function Header() {
       <div className="main-menu">
         <h1>
           <a href="/" className="button logo link-button">
+            <img src={LebIcon} style={{ width: "50px" }} alt="" />
             <span className="mobile-short-label">TGC</span>
             <span className="desktop-long-label">THE GOOD CORNER</span>
           </a>
