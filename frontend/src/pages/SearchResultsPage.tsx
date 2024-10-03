@@ -12,7 +12,7 @@ function SearchResultPage() {
     const fetchSearchResults = async () => {
       try {
         const result = await axios.get(
-          `http://localhost:3000/ad/title?title=${keyword}`
+          `http://localhost:3000/ad?title=${keyword}`
         );
         setAds(result.data);
       } catch (err) {

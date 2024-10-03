@@ -19,21 +19,6 @@ function Header() {
     fetchCategories();
   }, []);
 
-  // const handleSearchAd = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (searchQuery.trim()) {
-  //     navigate(`/searchAd/${searchQuery}`);
-  //   }
-  // };
-
-  // const handleSearchCat = (title: string) => {
-  //   if (title.trim()) {
-  //     navigate(`/searchCat/${title}`);
-  //   }
-  // };
-
-  // console.log(searchQuery);
-
   return (
     <header className="header">
       <div className="main-menu">
@@ -83,15 +68,7 @@ function Header() {
       </div>
       <nav className="categories-navigation">
         {categories.map((cat) => (
-          <Categories
-            key={cat.id}
-            title={cat.title}
-            id={cat.id}
-            onClick={() => {
-              navigate(`/searchCat/${cat.title}`);
-              console.log(cat.title);
-            }}
-          />
+          <Categories key={cat.id} title={cat.title} id={cat.id} />
         ))}
       </nav>
     </header>

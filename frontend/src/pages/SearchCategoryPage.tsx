@@ -12,7 +12,7 @@ function SearchCategoryPage() {
     const fetchSearchResultsCat = async () => {
       try {
         const result = await axios.get(
-          `http://localhost:3000/ad/category?category=${keyword}`
+          `http://localhost:3000/ad?category=${keyword}`
         );
         setAds(result.data);
       } catch (err) {
@@ -36,7 +36,7 @@ function SearchCategoryPage() {
       >
         Vider total
       </button>
-      <section className="recent-ads-search">
+      <section className="recent-ads">
         {ads.map((ad) => (
           <div key={ad.id}>
             <AdCard

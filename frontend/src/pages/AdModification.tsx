@@ -2,7 +2,6 @@ import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { CategoriesProps } from "../components/Categories";
-import { AdCardProps } from "../components/AdCard";
 import { useParams } from "react-router-dom";
 
 interface FormInputs {
@@ -17,22 +16,36 @@ interface FormInputs {
 
 function AdModification() {
   const { id } = useParams();
-  const [ads, setAds] = useState({} as AdCardProps);
   const [categories, setCategories] = useState<CategoriesProps[]>([]);
+  const [formData, setFormData] = useState<FormInputs>({
+    title: "",
+    description: "",
+    location: "",
+    owner: "",
+    picture: "",
+    price: 0,
+    category: 0,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await axios.get(`http://localhost:3000/ad/${id}`);
-        setAds(result.data);
+        setFormData({
+          title: result.data.title,
+          description: result.data.description,
+          location: result.data.location,
+          owner: result.data.owner,
+          picture: result.data.picture,
+          price: result.data.price,
+          category: result.data.category?.id,
+        });
       } catch (err) {
         console.log("error", err);
       }
     };
     fetchData();
   }, [id]);
-
-  console.log(ads);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -50,9 +63,23 @@ function AdModification() {
     formState: { errors },
   } = useForm<FormInputs>();
 
-  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const onSubmit: SubmitHandler<FormInputs> = async () => {
     try {
-      const response = await axios.put(`http://localhost:3000/ad/${id}`, data);
+      const response = await axios.put(
+        `http://localhost:3000/ad/${id}`,
+        formData
+      );
       console.log("data sent :", response.data);
     } catch (err) {
       console.log("error data not sent :", err);
@@ -68,7 +95,8 @@ function AdModification() {
             className="text-field"
             type="text"
             {...register("title")}
-            placeholder={ads.title}
+            value={formData.title}
+            onChange={handleInputChange}
           />
           {errors.title && <span>{errors.title.message}</span>}
         </label>
@@ -79,7 +107,8 @@ function AdModification() {
             className="text-field"
             type="text"
             {...register("description")}
-            placeholder={ads.description}
+            value={formData.description}
+            onChange={handleInputChange}
           />
           {errors.description && <span>{errors.description.message}</span>}
         </label>
@@ -90,7 +119,8 @@ function AdModification() {
             className="text-field"
             type="text"
             {...register("location")}
-            placeholder={ads.location}
+            value={formData.location}
+            onChange={handleInputChange}
           />
           {errors.location && <span>{errors.location.message}</span>}
         </label>
@@ -101,7 +131,8 @@ function AdModification() {
             className="text-field"
             type="text"
             {...register("owner")}
-            placeholder={ads.owner}
+            value={formData.owner}
+            onChange={handleInputChange}
           />
           {errors.owner && <span>{errors.owner.message}</span>}
         </label>
@@ -112,7 +143,8 @@ function AdModification() {
             className="text-field"
             type="text"
             {...register("picture")}
-            placeholder={ads.picture}
+            value={formData.picture}
+            onChange={handleInputChange}
           />
           {errors.picture && <span>{errors.picture.message}</span>}
         </label>
@@ -123,7 +155,8 @@ function AdModification() {
             className="text-field"
             type="number"
             {...register("price")}
-            placeholder={String(ads.price)}
+            value={formData.price}
+            onChange={handleInputChange}
           />
           {errors.price && <span>{errors.price.message}</span>}
         </label>
@@ -132,11 +165,12 @@ function AdModification() {
           {...register("category", {
             valueAsNumber: true,
           })}
+          value={formData.category}
+          onChange={handleInputChange}
         >
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
-              {" "}
-              {cat.title}{" "}
+              {cat.title}
             </option>
           ))}
           {errors.category && <span>{errors.category.message}</span>}

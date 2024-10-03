@@ -1,19 +1,21 @@
+import { Link } from "react-router-dom";
+
 export interface CategoriesProps {
   id: number;
   title: string;
-  onClick: (title: string) => void;
 }
 
-function Categories({ title, onClick }: CategoriesProps) {
+function Categories({ title }: CategoriesProps) {
   return (
     <>
-      <a
-        href=""
-        className="category-navigation-link"
-        onClick={() => onClick(title)}
+      <Link
+        to={`/searchCat/${title}`}
+        style={{ textDecoration: "none", color: "grey" }}
       >
-        {title}
-      </a>{" "}
+        <a href="" className="category-navigation-link">
+          {title}
+        </a>{" "}
+      </Link>
     </>
   );
 }
