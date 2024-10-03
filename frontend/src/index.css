@@ -151,6 +151,16 @@ h1 {
   padding: 5px 10px;
   color: #da8302;
   border-radius: 10px;
+  height: 100%;
+}
+
+.ad-card-tag {
+  font-size: 10px;
+  background-color: #c8ffcb;
+  padding: 5px 10px;
+  color: #086317;
+  border-radius: 10px;
+  height: 100%;
 }
 
 .ad-card-title {

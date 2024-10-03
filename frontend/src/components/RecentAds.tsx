@@ -43,6 +43,7 @@ function RecentAds() {
               createdAt={ad.createdAt}
               owner={ad.owner}
               category={ad.category}
+              tag={ad.tag}
               price={ad.price}
             />
             <button

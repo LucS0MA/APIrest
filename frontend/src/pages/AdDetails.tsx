@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { AdCardProps } from "../components/AdCard";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 function AdDetails() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [adDetail, setAdDetail] = useState({} as AdCardProps);
   const [adDeleted, setAdDeleted] = useState(false);
@@ -23,9 +25,12 @@ function AdDetails() {
   const deleteAd = async () => {
     try {
       await axios.delete(`http://localhost:3000/ad/${id}`);
+      toast.success("Ad has been deleted");
       setAdDeleted(!adDeleted);
+      navigate("/");
     } catch (err) {
       console.log("error", err);
+      toast.error("Error has been detected");
     }
   };
 

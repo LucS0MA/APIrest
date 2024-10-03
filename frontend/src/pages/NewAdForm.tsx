@@ -1,9 +1,32 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CategoriesProps } from "../components/Categories";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
+export interface TagsProps {
+  id: number;
+  title: string;
+}
+
+type FormInputs = {
+  title: string;
+  description: string;
+  location: string;
+  owner: string;
+  picture: string;
+  price: number;
+  category: number;
+  tag: number;
+  createdAt: string;
+};
 
 const NewAdFormPage = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([] as CategoriesProps[]);
+  const [tags, setTags] = useState([] as TagsProps[]);
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -15,60 +38,125 @@ const NewAdFormPage = () => {
     };
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const result = await axios.get("http://localhost:3000/tag");
+        setTags(result.data);
+      } catch (err) {
+        console.log("err", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormInputs>();
+
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    try {
+      await axios.post("http://localhost:3000/ad/", data);
+      toast.success("Ad has been added");
+      navigate("/");
+    } catch (error) {
+      console.error("Failed to update ad", error);
+      toast.error("Error has been detected");
+    }
+  };
+
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        const form = e.target;
-        const formData = new FormData(form as HTMLFormElement);
-        const formJson = Object.fromEntries(formData.entries());
-        axios.post("http://localhost:3000/ad", formJson);
-      }}
-    >
+    <form onSubmit={handleSubmit(onSubmit)}>
       <label>
         Titre de l'annonce:
         <br />
-        <input className="text-field" type="text" name="title" />
+        <input
+          className="text-field"
+          type="text"
+          {...register("title", { required: true })}
+        />
+        {errors.category && <span>Ce champ est requis</span>}
       </label>
       <br />
       <label>
         Description:
         <br />
-        <input className="text-field" type="text" name="description" />
+        <input
+          className="text-field"
+          type="text"
+          {...register("description", { required: true })}
+        />
+        {errors.category && <span>Ce champ est requis</span>}
       </label>
       <br />
       <label>
         Vendeur:
         <br />
-        <input className="text-field" type="text" name="owner" />
+        <input
+          className="text-field"
+          type="text"
+          {...register("owner", { required: true })}
+        />
+        {errors.category && <span>Ce champ est requis</span>}
       </label>
       <br />
       <label>
         Prix:
         <br />
-        <input className="text-field" type="number" name="price" />
+        <input
+          className="text-field"
+          type="number"
+          {...register("price", { required: true })}
+        />
+        {errors.category && <span>Ce champ est requis</span>}
       </label>
       <br />
       <label>
         Image:
         <br />
-        <input className="text-field" type="text" name="picture" />
+        <input
+          className="text-field"
+          type="text"
+          {...register("picture", { required: true })}
+        />
+        {errors.category && <span>Ce champ est requis</span>}
       </label>
       <br />
       <label>
         Ville:
         <br />
-        <input className="text-field" type="text" name="location" />
+        <input
+          className="text-field"
+          type="text"
+          {...register("location", { required: true })}
+        />
+        {errors.category && <span>Ce champ est requis</span>}
       </label>
       <br />
       <label>
         Date:
         <br />
-        <input className="text-field" type="date" name="createdAt" />
+        <input
+          className="text-field"
+          type="date"
+          {...register("createdAt", { required: true })}
+        />
+        {errors.category && <span>Ce champ est requis</span>}
       </label>
       <br />
-      <select name="category">
+      <select {...register("category", { required: true })}>
         {categories.map((el) => (
+          <option key={el.id} value={el.id}>
+            {el.title}
+          </option>
+        ))}
+      </select>
+      <br />
+      <select name="tag">
+        {tags.map((el) => (
           <option key={el.id} value={el.id}>
             {el.title}
           </option>

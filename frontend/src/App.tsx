@@ -9,6 +9,8 @@ import NewCategoryForm from "./pages/NewCategoryForm";
 import SearchResultPage from "./pages/SearchResultsPage";
 import SearchCategoryPage from "./pages/SearchCategoryPage";
 import AdModification from "./pages/AdModification";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
           <Route path="/ad/modif/:id" element={<AdModification />} />
         </Route>
       </Routes>
+      <ToastContainer theme="colored" />
     </>
   );
 }

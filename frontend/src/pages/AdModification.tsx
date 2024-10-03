@@ -3,8 +3,23 @@ import { useEffect, useState } from "react";
 import { CategoriesProps } from "../components/Categories";
 import { AdCardProps } from "../components/AdCard";
 import { useParams } from "react-router-dom";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
+type FormInputs = {
+  title: string;
+  description: string;
+  location: string;
+  owner: string;
+  picture: string;
+  price: number;
+  category: number;
+  createdAt: string;
+};
 
 const AdModification = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [categories, setCategories] = useState([] as CategoriesProps[]);
   const [newAd, setNewAd] = useState<AdCardProps>();
@@ -21,38 +36,59 @@ const AdModification = () => {
     fetchCategories();
   }, []);
 
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<FormInputs>();
+
   useEffect(() => {
     const fetchDataDetails = async () => {
       try {
         const result = await axios.get(`http://localhost:3000/ad/${id}`);
         setNewAd(result.data);
+        setValue("title", result.data.title);
+        setValue("description", result.data.description);
+        setValue("owner", result.data.owner);
+        setValue("price", result.data.price);
+        setValue("picture", result.data.picture);
+        setValue("location", result.data.location);
+        setValue(
+          "createdAt",
+          new Date(result.data.createdAt).toISOString().slice(0, 10)
+        );
+        setValue("category", result.data.category.id);
       } catch (err) {
         console.log("error", err);
       }
     };
     fetchDataDetails();
-  }, [id]);
+  }, [id, setValue]);
+
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    try {
+      await axios.put(`http://localhost:3000/ad/${id}`, data);
+      toast.success("Ad has been modified");
+      navigate("/");
+    } catch (error) {
+      console.error("Failed to update ad", error);
+      toast.error("Error has been detected");
+    }
+  };
 
   if (newAd) {
     return (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const form = e.target;
-          const formData = new FormData(form as HTMLFormElement);
-          const formJson = Object.fromEntries(formData.entries());
-          axios.put(`http://localhost:3000/ad/${id}`, formJson);
-        }}
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         <label>
           Titre de l'annonce:
           <br />
           <input
             className="text-field"
             type="text"
-            name="title"
-            defaultValue={newAd.title}
+            {...register("title", { required: true })}
           />
+          {errors.title && <span>Ce champ est requis</span>}
         </label>
         <br />
         <label>
@@ -61,9 +97,9 @@ const AdModification = () => {
           <input
             className="text-field"
             type="text"
-            name="description"
-            defaultValue={newAd.description}
+            {...register("description", { required: true })}
           />
+          {errors.category && <span>Ce champ est requis</span>}
         </label>
         <br />
         <label>
@@ -72,9 +108,9 @@ const AdModification = () => {
           <input
             className="text-field"
             type="text"
-            name="owner"
-            defaultValue={newAd.owner}
+            {...register("owner", { required: true })}
           />
+          {errors.category && <span>Ce champ est requis</span>}
         </label>
         <br />
         <label>
@@ -83,9 +119,9 @@ const AdModification = () => {
           <input
             className="text-field"
             type="number"
-            name="price"
-            defaultValue={newAd.price}
+            {...register("price", { required: true })}
           />
+          {errors.category && <span>Ce champ est requis</span>}
         </label>
         <br />
         <label>
@@ -94,9 +130,9 @@ const AdModification = () => {
           <input
             className="text-field"
             type="text"
-            name="picture"
-            defaultValue={newAd.picture}
+            {...register("picture", { required: true })}
           />
+          {errors.category && <span>Ce champ est requis</span>}
         </label>
         <br />
         <label>
@@ -105,9 +141,9 @@ const AdModification = () => {
           <input
             className="text-field"
             type="text"
-            name="location"
-            defaultValue={newAd.location}
+            {...register("location", { required: true })}
           />
+          {errors.category && <span>Ce champ est requis</span>}
         </label>
         <br />
         <label>
@@ -116,20 +152,19 @@ const AdModification = () => {
           <input
             className="text-field"
             type="date"
-            name="createdAt"
-            defaultValue={new Date(newAd.createdAt as string)
-              .toISOString()
-              .slice(0, 10)}
+            {...register("createdAt", { required: true })}
           />
+          {errors.category && <span>Ce champ est requis</span>}
         </label>
         <br />
-        <select name="category" defaultValue={newAd.category?.id}>
+        <select {...register("category", { required: true })}>
           {categories.map((el) => (
             <option key={el.id} value={el.id}>
               {el.title}
             </option>
           ))}
         </select>
+        {errors.category && <span>Ce champ est requis</span>}
         <button className="button">Submit</button>
       </form>
     );
