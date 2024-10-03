@@ -2,15 +2,15 @@ GET http://localhost:3000/ad
 
 ####
 
-GET http://localhost:3000/ad/title?title=poul
+GET http://localhost:3000/ad?title=poul
 
 ####
 
-GET http://localhost:3000/ad/category?category=voiture
+GET http://localhost:3000/ad?category=voiture
 
 ####
 
-GET http://localhost:3000/ad/tag?tag=Promotion
+GET http://localhost:3000/ad?tag=Promotion
 
 ####
 
@@ -37,12 +37,16 @@ Content-Type: application/json
 
 ####
 
-DELETE http://localhost:3000/ad/2
+DELETE http://localhost:3000/ad/4
 
 ####
-PUT http://localhost:3000/ad/1
+PUT http://localhost:3000/ad/8
 Content-Type: application/json
 
 {
+  "title": "Blouson",
+  "price": 125,
+  "category": 1,
+  "tag": [{"id": 1}],
     "picture": "https://www.cube-protection.fr/38958-large_default/blouson-a-capuche-hiver-homme-bartlett-carhartt-103826.jpg"
 }
