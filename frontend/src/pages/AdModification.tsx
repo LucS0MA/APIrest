@@ -16,7 +16,7 @@ type FormInputs = {
   picture: string;
   price: number;
   category: number;
-  tags: number[];
+  tag: number[];
   createdAt: string;
 };
 
@@ -26,6 +26,7 @@ const AdModification = () => {
   const [categories, setCategories] = useState([] as CategoriesProps[]);
   const [newAd, setNewAd] = useState<AdCardProps>();
   const [tags, setTags] = useState([] as TagsProps[]);
+  const [preTag, setPreTag] = useState([] as TagsProps[]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -74,6 +75,7 @@ const AdModification = () => {
           new Date(result.data.createdAt).toISOString().slice(0, 10)
         );
         setValue("category", result.data.category.id);
+        setPreTag(result.data.tag);
       } catch (err) {
         console.log("error", err);
       }
@@ -81,11 +83,11 @@ const AdModification = () => {
     fetchDataDetails();
   }, [id, setValue]);
 
-  console.log(newAd);
+  console.log(preTag);
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    const finalData = data.tags
-      ? { ...data, tag: data.tags.map((el) => ({ id: el })) }
+    const finalData = data.tag
+      ? { ...data, tag: data.tag.map((el) => ({ id: el })) }
       : data;
     try {
       await axios.put(`http://localhost:3000/ad/${id}`, finalData);
@@ -219,7 +221,7 @@ const AdModification = () => {
                       type="checkbox"
                       value={tag.id}
                       defaultChecked={newAd?.tag.some((t) => t.id == tag.id)}
-                      {...register("tags")}
+                      {...register("tag")}
                     />
                     <label>{tag.title}</label>
                   </div>

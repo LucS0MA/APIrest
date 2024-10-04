@@ -54,7 +54,18 @@ function AdDetails() {
           <h2 className="ad-details-title">{adDetail.title}</h2>
           <section className="ad-details">
             <div className="ad-details-image-container">
-              <img className="ad-details-image" src={adDetail.picture} />
+              {adDetail.pictures && adDetail.pictures.length > 0 ? (
+                adDetail.pictures.map((picture) => (
+                  <img
+                    key={picture.id}
+                    className="ad-details-image"
+                    src={picture.url}
+                    alt={adDetail.title}
+                  />
+                ))
+              ) : (
+                <p>No image available</p>
+              )}
             </div>
             <div className="ad-details-info">
               <div className="ad-details-price">{adDetail.price} €</div>

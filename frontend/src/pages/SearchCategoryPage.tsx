@@ -41,7 +41,7 @@ function SearchCategoryPage() {
           <div key={ad.id}>
             <AdCard
               id={ad.id}
-              picture={ad.picture}
+              pictures={ad.pictures}
               title={ad.title}
               description={ad.description}
               location={ad.location}

@@ -10,6 +10,7 @@ function RecentAds() {
     const fetchData = async () => {
       try {
         const result = await axios.get("http://localhost:3000/ad");
+        console.log(result.data);
         setAds(result.data);
       } catch (err) {
         console.log("error", err);
@@ -36,7 +37,7 @@ function RecentAds() {
           <div key={ad.id}>
             <AdCard
               id={ad.id}
-              picture={ad.picture}
+              pictures={ad.pictures}
               title={ad.title}
               description={ad.description}
               location={ad.location}

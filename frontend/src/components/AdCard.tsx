@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export interface AdCardProps {
   id: number;
   title: string;
-  picture: string;
+  pictures: { url: string; id: number }[];
   price: number;
   description: string;
   location: string;
@@ -13,7 +13,8 @@ export interface AdCardProps {
   tag: { title: string; id: number }[];
 }
 
-function AdCard({ title, picture, price, category, tag, id }: AdCardProps) {
+function AdCard({ title, pictures, price, category, tag, id }: AdCardProps) {
+  const imageUrl = pictures.length > 0 ? pictures[0].url : "";
   return (
     <div className="ad-card-container">
       <Link className="ad-card-link" to={`/ad/${id}`}>
@@ -27,7 +28,7 @@ function AdCard({ title, picture, price, category, tag, id }: AdCardProps) {
               ))
             : ""}
         </div>
-        <img className="ad-card-image" src={picture} alt={title} />
+        <img className="ad-card-image" src={imageUrl} alt={title} />
         <div className="ad-card-text">
           <div className="ad-card-title">{title}</div>
           <div className="ad-card-price">{price} €</div>
