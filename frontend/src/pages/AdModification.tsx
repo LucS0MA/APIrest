@@ -85,7 +85,7 @@ const AdModification = () => {
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     const finalData = data.tags
-      ? { ...data, tags: data.tags.map((el) => ({ id: el })) }
+      ? { ...data, tag: data.tags.map((el) => ({ id: el })) }
       : data;
     try {
       await axios.put(`http://localhost:3000/ad/${id}`, finalData);
