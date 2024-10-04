@@ -7,6 +7,7 @@ import { Ad } from "./entities/Ad";
 import { Category } from "./entities/Category";
 import { Tag } from "./entities/Tag";
 import { validate } from "class-validator";
+import { Picture } from "./entities/Picture";
 
 const app = express();
 const port = 3000;
@@ -67,16 +68,24 @@ app.get("/ad/:id", async (req, res) => {
 
 app.post("/ad", async (req, res) => {
   console.log("request body", req.body);
+  const pictures: Picture[] = [];
+  req.body.pictures.forEach(async (el: string) => {
+    const newPicture = new Picture();
+    newPicture.url = el;
+    pictures.push(newPicture);
+  });
   const adToSave = new Ad();
   if (req.body.tag) {
     adToSave.tag = req.body.tag;
+  }
+  if (pictures.length > 0) {
+    adToSave.pictures = pictures;
   }
   adToSave.category = req.body.category ? req.body.category : 6;
   adToSave.createdAt = req.body.createdAt;
   adToSave.description = req.body.description;
   adToSave.location = req.body.location;
   adToSave.owner = req.body.owner;
-  adToSave.picture = req.body.picture;
   adToSave.price = req.body.price;
   adToSave.title = req.body.title;
 

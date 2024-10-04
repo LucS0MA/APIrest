@@ -7,10 +7,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  OneToMany,
 } from "typeorm";
 import { MinLength } from "class-validator";
 import { Category } from "./Category";
 import { Tag } from "./Tag";
+import { Picture } from "./Picture";
 
 @Entity()
 export class Ad extends BaseEntity {
@@ -30,8 +32,11 @@ export class Ad extends BaseEntity {
   @Column()
   price: number;
 
-  @Column()
-  picture: string;
+  @OneToMany(() => Picture, (picture) => picture.ad, {
+    cascade: true,
+    eager: true,
+  })
+  pictures: Picture[];
 
   @Column()
   location: string;
