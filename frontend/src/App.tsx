@@ -27,7 +27,7 @@ function App() {
           <Route path="/ad/modif/:id" element={<AdModification />} />
         </Route>
       </Routes>
-      <ToastContainer theme="colored" />
+      <ToastContainer theme="colored" position="bottom-right" />
     </>
   );
 }

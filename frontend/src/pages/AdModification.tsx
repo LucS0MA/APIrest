@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { TagsProps } from "./NewAdForm";
 
 type FormInputs = {
   title: string;
@@ -15,6 +16,7 @@ type FormInputs = {
   picture: string;
   price: number;
   category: number;
+  tags: number[];
   createdAt: string;
 };
 
@@ -23,6 +25,7 @@ const AdModification = () => {
   const { id } = useParams();
   const [categories, setCategories] = useState([] as CategoriesProps[]);
   const [newAd, setNewAd] = useState<AdCardProps>();
+  const [tags, setTags] = useState([] as TagsProps[]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -34,6 +37,18 @@ const AdModification = () => {
       }
     };
     fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const result = await axios.get("http://localhost:3000/tag");
+        setTags(result.data);
+      } catch (err) {
+        console.log("err", err);
+      }
+    };
+    fetchTags();
   }, []);
 
   const {
@@ -66,10 +81,17 @@ const AdModification = () => {
     fetchDataDetails();
   }, [id, setValue]);
 
+  console.log(newAd);
+
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    const finalData = data.tags
+      ? { ...data, tags: data.tags.map((el) => ({ id: el })) }
+      : data;
     try {
-      await axios.put(`http://localhost:3000/ad/${id}`, data);
+      await axios.put(`http://localhost:3000/ad/${id}`, finalData);
       toast.success("Ad has been modified");
+      console.log("Final data to submit:", finalData);
+
       navigate("/");
     } catch (error) {
       console.error("Failed to update ad", error);
@@ -81,109 +103,131 @@ const AdModification = () => {
     return (
       <div className="border-form">
         <form onSubmit={handleSubmit(onSubmit)} className="newAdForm">
-          <label>
-            Titre de l'annonce:
-            <br />
-            <input
-              className="text-field-input"
-              type="text"
-              {...register("title", { required: true })}
-            />
-            {errors.title && (
-              <span className="errorRed">Ce champ est requis</span>
-            )}
-          </label>
-          <br />
-          <label>
-            Description:
-            <br />
-            <input
-              className="text-field-input"
-              type="text"
-              {...register("description", { required: true })}
-            />
-            {errors.category && (
-              <span className="errorRed">Ce champ est requis</span>
-            )}
-          </label>
-          <br />
-          <label>
-            Vendeur:
-            <br />
-            <input
-              className="text-field-input"
-              type="text"
-              {...register("owner", { required: true })}
-            />
-            {errors.category && (
-              <span className="errorRed">Ce champ est requis</span>
-            )}
-          </label>
-          <br />
-          <label>
-            Prix:
-            <br />
-            <input
-              className="text-field-input"
-              type="number"
-              {...register("price", { required: true })}
-            />
-            {errors.category && (
-              <span className="errorRed">Ce champ est requis</span>
-            )}
-          </label>
-          <br />
-          <label>
-            Image:
-            <br />
-            <input
-              className="text-field-input"
-              type="text"
-              {...register("picture", { required: true })}
-            />
-            {errors.category && (
-              <span className="errorRed">Ce champ est requis</span>
-            )}
-          </label>
-          <br />
-          <label>
-            Ville:
-            <br />
-            <input
-              className="text-field-input"
-              type="text"
-              {...register("location", { required: true })}
-            />
-            {errors.category && (
-              <span className="errorRed">Ce champ est requis</span>
-            )}
-          </label>
-          <br />
-          <label>
-            Date:
-            <br />
-            <input
-              className="text-field"
-              type="date"
-              {...register("createdAt", { required: true })}
-            />
-            {errors.category && (
-              <span className="errorRed">Ce champ est requis</span>
-            )}
-          </label>
-          <br />
-          <select {...register("category", { required: true })}>
-            {categories.map((el) => (
-              <option key={el.id} value={el.id}>
-                {el.title}
-              </option>
-            ))}
-          </select>
-          <br />
-          {errors.category && (
-            <span className="errorRed">Ce champ est requis</span>
-          )}
-          <button className="button">Submit</button>
+          <div className="grid-container">
+            <div className="form-column">
+              <label>
+                Titre de l'annonce:
+                <br />
+                <input
+                  className="text-field-input"
+                  type="text"
+                  {...register("title", { required: true })}
+                />
+                {errors.title && (
+                  <span className="errorRed">Ce champ est requis</span>
+                )}
+              </label>
+              <br />
+              <label>
+                Description:
+                <br />
+                <input
+                  className="text-field-input"
+                  type="text"
+                  {...register("description", { required: true })}
+                />
+                {errors.description && (
+                  <span className="errorRed">Ce champ est requis</span>
+                )}
+              </label>
+              <br />
+              <label>
+                Vendeur:
+                <br />
+                <input
+                  className="text-field-input"
+                  type="text"
+                  {...register("owner", { required: true })}
+                />
+                {errors.owner && (
+                  <span className="errorRed">Ce champ est requis</span>
+                )}
+              </label>
+              <br />
+              <label>
+                Prix:
+                <br />
+                <input
+                  className="text-field-input"
+                  type="number"
+                  {...register("price", { required: true })}
+                />
+                {errors.price && (
+                  <span className="errorRed">Ce champ est requis</span>
+                )}
+              </label>
+              <br />
+            </div>
+            <div className="form-column">
+              <label>
+                Image:
+                <br />
+                <input
+                  className="text-field-input"
+                  type="text"
+                  {...register("picture", { required: true })}
+                />
+                {errors.picture && (
+                  <span className="errorRed">Ce champ est requis</span>
+                )}
+              </label>
+              <br />
+              <label>
+                Ville:
+                <br />
+                <input
+                  className="text-field-input"
+                  type="text"
+                  {...register("location", { required: true })}
+                />
+                {errors.location && (
+                  <span className="errorRed">Ce champ est requis</span>
+                )}
+              </label>
+              <br />
+              <label>
+                Date:
+                <br />
+                <input
+                  className="text-field"
+                  type="date"
+                  {...register("createdAt", { required: true })}
+                />
+                {errors.createdAt && (
+                  <span className="errorRed">Ce champ est requis</span>
+                )}
+              </label>
+              <br />
+              <select {...register("category", { required: true })}>
+                {categories.map((el) => (
+                  <option key={el.id} value={el.id}>
+                    {el.title}
+                  </option>
+                ))}
+              </select>
+              <br />
+              {errors.category && (
+                <span className="errorRed">Ce champ est requis</span>
+              )}
+              <div>
+                <label>Tags:</label>
+                <br />
+                {tags.map((tag) => (
+                  <div key={tag.id}>
+                    <input
+                      key={tag.id}
+                      type="checkbox"
+                      value={tag.id}
+                      defaultChecked={newAd?.tag.some((t) => t.id == tag.id)}
+                      {...register("tags")}
+                    />
+                    <label>{tag.title}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button className="button sub">Submit</button>
+          </div>
         </form>
       </div>
     );
