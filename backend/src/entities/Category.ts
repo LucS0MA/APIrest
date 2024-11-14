@@ -1,4 +1,10 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { MaxLength } from "class-validator";
 import { Ad } from "./Ad";
 import { Field, ObjectType } from "type-graphql";
@@ -11,10 +17,10 @@ export class Category extends BaseEntity {
   id: number;
 
   @Field()
-  @Column({unique: true})
-  @MaxLength(20, { message: "Maximum de 20 caractères"})
+  @Column({ unique: true })
+  @MaxLength(20, { message: "Maximum de 20 caractères" })
   title: string;
 
-  @OneToMany(() => Ad, ad => ad.category)
+  @OneToMany(() => Ad, (ad) => ad.category)
   ads: Ad[];
 }
