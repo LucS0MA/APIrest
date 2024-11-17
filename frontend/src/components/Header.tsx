@@ -1,24 +1,16 @@
-import { useEffect, useState } from "react";
 import Categories, { CategoriesProps } from "./Categories";
-import axios from "axios";
+import { useQuery } from '@apollo/client';
 import { useNavigate } from "react-router-dom";
 import LebIcon from "../assets/LebIcon.svg";
+import { GET_ALL_CATEGORIES } from "../queries/queries";
+
 
 function Header() {
-  const [categories, setCategories] = useState([] as CategoriesProps[]);
+  const { loading, error, data } = useQuery(GET_ALL_CATEGORIES);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const result = await axios.get("http://localhost:3000/category");
-        setCategories(result.data);
-      } catch (err) {
-        console.log("error", err);
-      }
-    };
-    fetchCategories();
-  }, []);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
 
   return (
     <header className="header">
@@ -69,7 +61,7 @@ function Header() {
         </a>
       </div>
       <nav className="categories-navigation">
-        {categories.map((cat) => (
+        {data.getAllCategories.map((cat: CategoriesProps) => (
           <Categories key={cat.id} title={cat.title} id={cat.id} />
         ))}
       </nav>

@@ -1,38 +1,45 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { AdCardProps } from "../components/AdCard";
-import axios from "axios";
+import { useQuery, useMutation } from '@apollo/client';
 import { toast } from "react-toastify";
+import { GET_AD_BY_ID } from "../queries/queries";
+import { DEL_AD_BY_ID } from "../queries/mutations";
+
 
 function AdDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [adDetail, setAdDetail] = useState({} as AdCardProps);
   const [adDeleted, setAdDeleted] = useState(false);
+  const { loading, error, data } = useQuery(GET_AD_BY_ID, {
+    variables: { getAdByIdId: Number(id) },
+  });
+  const [deleteAdMutation] = useMutation(DEL_AD_BY_ID);
 
-  useEffect(() => {
-    const fetchDataDetails = async () => {
-      try {
-        const result = await axios.get(`http://localhost:3000/ad/${id}`);
-        setAdDetail(result.data);
-      } catch (err) {
-        console.log("error", err);
-      }
-    };
-    fetchDataDetails();
-  }, [id]);
-
+  const reloadPage = () => {
+    window.location.reload();
+  };
+  
   const deleteAd = async () => {
     try {
-      await axios.delete(`http://localhost:3000/ad/${id}`);
+      await deleteAdMutation({
+        variables: { deleteAdId: Number(id) },
+      });
       toast.success("Ad has been deleted");
-      setAdDeleted(!adDeleted);
       navigate("/");
+      setAdDeleted(true);
+      reloadPage();
     } catch (err) {
-      console.log("error", err);
+      console.error("Error during ad deletion:", err);
       toast.error("Error has been detected");
     }
   };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  const adDetail = data.getAdById;
+
+  console.log(adDetail)
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -55,7 +62,7 @@ function AdDetails() {
           <section className="ad-details">
             <div className="ad-details-image-container">
               {adDetail.pictures && adDetail.pictures.length > 0 ? (
-                adDetail.pictures.map((picture) => (
+                adDetail.pictures.map((picture: any) => (
                   <img
                     key={picture.id}
                     className="ad-details-image"

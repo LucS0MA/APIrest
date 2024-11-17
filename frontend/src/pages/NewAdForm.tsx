@@ -1,55 +1,26 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { CategoriesProps } from "../components/Categories";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
-export interface TagsProps {
-  id: number;
-  title: string;
-}
+import { useMutation, useQuery } from '@apollo/client';
+import { GET_ALL_CATEGORIES } from "../queries/queries";
+import { CREATE_AD } from "../queries/mutations";
 
 type FormInputs = {
   title: string;
   description: string;
   location: string;
   owner: string;
-  picture: string;
-  price: number;
-  category: number;
+  picture: string[];
+  price: string;
+  category: string;
   tags: number[];
   createdAt: string;
 };
 
 const NewAdFormPage = () => {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([] as CategoriesProps[]);
-  const [tags, setTags] = useState([] as TagsProps[]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const result = await axios.get("http://localhost:3000/category");
-        setCategories(result.data);
-      } catch (err) {
-        console.log("err", err);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const result = await axios.get("http://localhost:3000/tag");
-        setTags(result.data);
-      } catch (err) {
-        console.log("err", err);
-      }
-    };
-    fetchTags();
-  }, []);
+  const { loading, error, data } = useQuery(GET_ALL_CATEGORIES);
+  const [createAd ] = useMutation(CREATE_AD);
 
   const {
     register,
@@ -57,19 +28,37 @@ const NewAdFormPage = () => {
     formState: { errors },
   } = useForm<FormInputs>();
 
-  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    const finalData = data.tags
-      ? { ...data, tag: data.tags.map((el) => ({ id: el })) }
-      : data;
+  const onSubmit: SubmitHandler<FormInputs> = async (formData) => {
+    const transformedData = {
+      title: formData.title,
+      description: formData.description,
+      location: formData.location,
+      owner: formData.owner,
+      picturesUrls: [formData.picture],
+      price: parseFloat(formData.price),
+      category: formData.category,
+      createdAt: new Date(formData.createdAt).toISOString()
+    };
+    console.log(transformedData)
+  
     try {
-      await axios.post("http://localhost:3000/ad/", finalData);
-      toast.success("Ad has been added");
-      navigate("/");
-    } catch (error) {
-      console.error("Failed to update ad", error);
-      toast.error("Error has been detected");
+      await createAd({
+        variables: {
+          data: transformedData,
+        },
+      });
+      toast.success("Ad has been successfully added!");
+      navigate("/"); 
+    } catch (err) {
+      console.error("Failed to create ad", err);
+      toast.error("An error occurred while creating the ad.");
     }
   };
+
+  console.log(data)
+
+  if (loading) return 'Submitting...';
+  if (error) return `Submission error! ${error.message}`;
 
   return (
     <div className="border-form">
@@ -170,7 +159,7 @@ const NewAdFormPage = () => {
             </label>
             <br />
             <select {...register("category")}>
-              {categories.map((el) => (
+              {data.getAllCategories.map((el: any) => (
                 <option key={el.id} value={el.id}>
                   {el.title}
                 </option>
@@ -180,21 +169,6 @@ const NewAdFormPage = () => {
               )}
             </select>
             <br />
-            <div>
-              <label>Tags:</label>
-              <br />
-              {tags.map((tag) => (
-                <div key={tag.id}>
-                  <input
-                    key={tag.id}
-                    type="checkbox"
-                    value={tag.id}
-                    {...register("tags")}
-                  />
-                  <label>{tag.title}</label>
-                </div>
-              ))}
-            </div>
           </div>
           <button className="button sub">Submit</button>
         </div>

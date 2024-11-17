@@ -1,25 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AdCard, { AdCardProps } from "./AdCard";
-import axios from "axios";
+import { useQuery } from '@apollo/client';
+import { GET_ALL_ADS } from "../queries/queries";
 
 function RecentAds() {
+  const { loading, error, data } = useQuery(GET_ALL_ADS);
   const [total, setTotal] = useState(0);
-  const [ads, setAds] = useState([] as AdCardProps[]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await axios.get("http://localhost:3000/ad");
-        console.log(result.data);
-        setAds(result.data);
-      } catch (err) {
-        console.log("error", err);
-      }
-    };
-    fetchData();
-  }, []);
-
-  console.log(ads);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
 
   return (
     <>
@@ -33,7 +22,7 @@ function RecentAds() {
         Vider total
       </button>
       <section className="recent-ads">
-        {ads.map((ad) => (
+        {data.getAllAds.map((ad: AdCardProps) => (
           <div key={ad.id}>
             <AdCard
               id={ad.id}

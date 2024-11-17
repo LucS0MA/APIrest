@@ -1,12 +1,11 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { CategoriesProps } from "../components/Categories";
-import { AdCardProps } from "../components/AdCard";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { TagsProps } from "./NewAdForm";
+import { GET_AD_BY_ID } from "../queries/queries";
+import { UPDATE_AD } from "../queries/mutations";
+import { useMutation, useQuery } from "@apollo/client";
 
 type FormInputs = {
   title: string;
@@ -14,7 +13,7 @@ type FormInputs = {
   location: string;
   owner: string;
   picture: string;
-  price: number;
+  price: string;
   category: number;
   tag: number[];
   createdAt: string;
@@ -23,34 +22,15 @@ type FormInputs = {
 const AdModification = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [categories, setCategories] = useState([] as CategoriesProps[]);
-  const [newAd, setNewAd] = useState<AdCardProps>();
-  const [tags, setTags] = useState([] as TagsProps[]);
-  const [preTag, setPreTag] = useState([] as TagsProps[]);
+  const { loading, error, data } = useQuery(GET_AD_BY_ID, {
+    variables: { getAdByIdId: Number(id) },
+  });
+  const [updateAd ] = useMutation(UPDATE_AD);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const result = await axios.get("http://localhost:3000/category");
-        setCategories(result.data);
-      } catch (err) {
-        console.log("err", err);
-      }
-    };
-    fetchCategories();
-  }, []);
+  console.log("data", data.getAdById)
 
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const result = await axios.get("http://localhost:3000/tag");
-        setTags(result.data);
-      } catch (err) {
-        console.log("err", err);
-      }
-    };
-    fetchTags();
-  }, []);
+  const baseAd = data.getAdById;
+  console.log("baseAd", baseAd.title)
 
   const {
     register,
@@ -60,48 +40,54 @@ const AdModification = () => {
   } = useForm<FormInputs>();
 
   useEffect(() => {
-    const fetchDataDetails = async () => {
-      try {
-        const result = await axios.get(`http://localhost:3000/ad/${id}`);
-        setNewAd(result.data);
-        setValue("title", result.data.title);
-        setValue("description", result.data.description);
-        setValue("owner", result.data.owner);
-        setValue("price", result.data.price);
-        setValue("picture", result.data.picture);
-        setValue("location", result.data.location);
-        setValue(
-          "createdAt",
-          new Date(result.data.createdAt).toISOString().slice(0, 10)
-        );
-        setValue("category", result.data.category.id);
-        setPreTag(result.data.tag);
-      } catch (err) {
-        console.log("error", err);
-      }
-    };
-    fetchDataDetails();
-  }, [id, setValue]);
-
-  console.log(preTag);
-
-  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    const finalData = data.tag
-      ? { ...data, tag: data.tag.map((el) => ({ id: el })) }
-      : data;
-    try {
-      await axios.put(`http://localhost:3000/ad/${id}`, finalData);
-      toast.success("Ad has been modified");
-      console.log("Final data to submit:", finalData);
-
-      navigate("/");
-    } catch (error) {
-      console.error("Failed to update ad", error);
-      toast.error("Error has been detected");
+    if (data && data.getAdById) {
+      const baseAd = data.getAdById;
+      setValue("title", baseAd.title);
+      setValue("description", baseAd.description);
+      setValue("owner", baseAd.owner);
+      setValue("price", baseAd.price);
+      setValue("picture", baseAd.picture);
+      setValue("location", baseAd.location);
+      setValue(
+        "createdAt",
+        new Date(baseAd.createdAt).toISOString().slice(0, 10)
+      );
+      setValue("category", baseAd.category.id);
     }
-  };
+  }, [data, setValue]);
 
-  if (newAd) {
+        const onSubmit: SubmitHandler<FormInputs> = async (formData) => {
+          const transformedData = {
+            title: formData.title,
+            description: formData.description,
+            location: formData.location,
+            owner: formData.owner,
+            picturesUrls: [formData.picture],
+            price: parseFloat(formData.price),
+            category: formData.category,
+            createdAt: new Date(formData.createdAt).toISOString()
+          };
+          console.log(transformedData)
+        
+          try {
+            await updateAd({
+              variables: {
+                data: transformedData,
+              },
+            });
+            toast.success("Ad has been successfully added!");
+            navigate("/"); 
+          } catch (err) {
+            console.error("Failed to create ad", err);
+            toast.error("An error occurred while creating the ad.");
+          }
+        };
+      
+  if (loading) return 'Submitting...';
+  if (error) return `Submission error! ${error.message}`;
+  if (!data || !data.getAdById) {
+  return <p>Chargement des données...</p>;
+}
     return (
       <div className="border-form">
         <form onSubmit={handleSubmit(onSubmit)} className="newAdForm">
@@ -199,43 +185,12 @@ const AdModification = () => {
                   <span className="errorRed">Ce champ est requis</span>
                 )}
               </label>
-              <br />
-              <select {...register("category", { required: true })}>
-                {categories.map((el) => (
-                  <option key={el.id} value={el.id}>
-                    {el.title}
-                  </option>
-                ))}
-              </select>
-              <br />
-              {errors.category && (
-                <span className="errorRed">Ce champ est requis</span>
-              )}
-              <div>
-                <label>Tags:</label>
-                <br />
-                {tags.map((tag) => (
-                  <div key={tag.id}>
-                    <input
-                      key={tag.id}
-                      type="checkbox"
-                      value={tag.id}
-                      defaultChecked={newAd?.tag.some((t) => t.id == tag.id)}
-                      {...register("tag")}
-                    />
-                    <label>{tag.title}</label>
-                  </div>
-                ))}
-              </div>
             </div>
             <button className="button sub">Submit</button>
           </div>
         </form>
       </div>
     );
-  } else {
-    return <p>Loading ...</p>;
-  }
-};
+  };
 
 export default AdModification;
