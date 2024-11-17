@@ -34,7 +34,8 @@ class AdResolver {
     }
     const newAdToSave = Ad.create({ ...newAdData, pictures });
     const result = await newAdToSave.save();
-    return result;
+    const AdAfterSave = await Ad.findOneByOrFail({ id: result.id });
+    return AdAfterSave;
   }
 
   @Mutation(() => String)
