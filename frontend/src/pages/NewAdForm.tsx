@@ -1,32 +1,48 @@
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from '@apollo/client';
-import { GET_ALL_CATEGORIES } from "../queries/queries";
-import { CREATE_AD } from "../queries/mutations";
+import { useMutation } from "@apollo/client";
+import { CREATE_AD } from "../graphql/mutations";
+import {
+  useGetAllCategoriesQuery,
+  useGetAllTagsQuery,
+} from "../generated/graphql-types";
 
 type FormInputs = {
   title: string;
   description: string;
   location: string;
   owner: string;
-  picture: string[];
+  pictures: { url: string }[];
   price: string;
   category: string;
-  tags: number[];
+  tag: string[];
   createdAt: string;
 };
 
 const NewAdFormPage = () => {
   const navigate = useNavigate();
-  const { loading, error, data } = useQuery(GET_ALL_CATEGORIES);
-  const [createAd ] = useMutation(CREATE_AD);
+  const { loading, error, data } = useGetAllCategoriesQuery();
+  const {
+    loading: loadingTags,
+    error: errorTags,
+    data: dataTags,
+  } = useGetAllTagsQuery();
+  const [createAd] = useMutation(CREATE_AD);
+
+  console.log("datatags", dataTags);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<FormInputs>();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "pictures",
+  });
 
   const onSubmit: SubmitHandler<FormInputs> = async (formData) => {
     const transformedData = {
@@ -34,13 +50,14 @@ const NewAdFormPage = () => {
       description: formData.description,
       location: formData.location,
       owner: formData.owner,
-      picturesUrls: [formData.picture],
+      pictures: formData.pictures,
       price: parseFloat(formData.price),
       category: formData.category,
-      createdAt: new Date(formData.createdAt).toISOString()
+      createdAt: new Date(formData.createdAt).toISOString(),
+      tag: formData.tag ? formData.tag.map((el) => ({ id: parseInt(el) })) : [],
     };
-    console.log(transformedData)
-  
+    console.log("dataforbackend", transformedData);
+
     try {
       await createAd({
         variables: {
@@ -48,17 +65,20 @@ const NewAdFormPage = () => {
         },
       });
       toast.success("Ad has been successfully added!");
-      navigate("/"); 
+      navigate("/");
     } catch (err) {
       console.error("Failed to create ad", err);
       toast.error("An error occurred while creating the ad.");
     }
   };
 
-  console.log(data)
+  console.log(data);
 
-  if (loading) return 'Submitting...';
+  if (loading) return "Submitting...";
   if (error) return `Submission error! ${error.message}`;
+
+  if (loadingTags) return "Submitting...";
+  if (errorTags) return `Submission error! ${errorTags.message}`;
 
   return (
     <div className="border-form">
@@ -119,18 +139,22 @@ const NewAdFormPage = () => {
             <br />
           </div>
           <div className="form-column">
-            <label>
-              Image:
-              <br />
-              <input
-                className="text-field-input"
-                type="text"
-                {...register("picture", { required: true })}
-              />
-              {errors.picture && (
-                <span className="errorRed">Ce champ est requis</span>
-              )}
-            </label>
+            <ul>
+              {fields.map((item, index) => (
+                <li key={item.id}>
+                  <input
+                    {...register(`pictures.${index}.url` as const)}
+                    placeholder={`Photo n°${index + 1}`}
+                  />
+                  <button type="button" onClick={() => remove(index)}>
+                    Delete image
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button type="button" onClick={() => append({ url: "" })}>
+              Add image
+            </button>
             <br />
             <label>
               Ville:
@@ -159,7 +183,7 @@ const NewAdFormPage = () => {
             </label>
             <br />
             <select {...register("category")}>
-              {data.getAllCategories.map((el: any) => (
+              {data?.getAllCategories.map((el: any) => (
                 <option key={el.id} value={el.id}>
                   {el.title}
                 </option>
@@ -169,6 +193,16 @@ const NewAdFormPage = () => {
               )}
             </select>
             <br />
+            <div>
+              <label>Tags:</label>
+              <br />
+              {dataTags?.getAllTags.map((el) => (
+                <div key={el.id}>
+                  <input type="checkbox" value={el.id} {...register("tag")} />
+                  <label>{el.title}</label>
+                </div>
+              ))}
+            </div>
           </div>
           <button className="button sub">Submit</button>
         </div>

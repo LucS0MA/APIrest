@@ -1,12 +1,11 @@
-import Categories, { CategoriesProps } from "./Categories";
-import { useQuery } from '@apollo/client';
+import Categories from "./Categories";
 import { useNavigate } from "react-router-dom";
 import LebIcon from "../assets/LebIcon.svg";
-import { GET_ALL_CATEGORIES } from "../queries/queries";
+import { useGetAllCategoriesQuery } from "../generated/graphql-types";
 
 
 function Header() {
-  const { loading, error, data } = useQuery(GET_ALL_CATEGORIES);
+  const { loading, error, data } = useGetAllCategoriesQuery();
   const navigate = useNavigate();
 
   if (loading) return <p>Loading...</p>;
@@ -61,8 +60,8 @@ function Header() {
         </a>
       </div>
       <nav className="categories-navigation">
-        {data.getAllCategories.map((cat: CategoriesProps) => (
-          <Categories key={cat.id} title={cat.title} id={cat.id} />
+        {data?.getAllCategories.map((el) => (
+          <Categories key={el.id} title={el.title} id={el.id} />
         ))}
       </nav>
     </header>

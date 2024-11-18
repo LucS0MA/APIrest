@@ -3,34 +3,52 @@ import { useParams } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { GET_AD_BY_ID } from "../queries/queries";
-import { UPDATE_AD } from "../queries/mutations";
+import { GET_AD_BY_ID } from "../graphql/queries";
+import { UPDATE_AD } from "../graphql/mutations";
 import { useMutation, useQuery } from "@apollo/client";
+import {
+  useGetAllCategoriesQuery,
+  useGetAllTagsQuery,
+} from "../generated/graphql-types";
 
 type FormInputs = {
   title: string;
   description: string;
   location: string;
   owner: string;
-  picture: string;
+  // picture: string;
   price: string;
   category: number;
-  tag: number[];
+  tags: string[];
   createdAt: string;
 };
 
 const AdModification = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const {
+    loading: loadingCat,
+    error: errorCat,
+    data: dataCat,
+  } = useGetAllCategoriesQuery();
+  const {
+    loading: loadingTags,
+    error: errorTags,
+    data: dataTags,
+  } = useGetAllTagsQuery();
   const { loading, error, data } = useQuery(GET_AD_BY_ID, {
     variables: { getAdByIdId: Number(id) },
   });
-  const [updateAd ] = useMutation(UPDATE_AD);
+  const [updateAd] = useMutation(UPDATE_AD);
 
-  console.log("data", data.getAdById)
+  console.log("data", data.getAdById.id);
+
+  // const reloadPage = () => {
+  //   window.location.reload();
+  // };
 
   const baseAd = data.getAdById;
-  console.log("baseAd", baseAd.title)
+  console.log("baseAd", baseAd);
 
   const {
     register,
@@ -46,7 +64,7 @@ const AdModification = () => {
       setValue("description", baseAd.description);
       setValue("owner", baseAd.owner);
       setValue("price", baseAd.price);
-      setValue("picture", baseAd.picture);
+      // setValue("picture", baseAd.picture);
       setValue("location", baseAd.location);
       setValue(
         "createdAt",
@@ -56,98 +74,101 @@ const AdModification = () => {
     }
   }, [data, setValue]);
 
-        const onSubmit: SubmitHandler<FormInputs> = async (formData) => {
-          const transformedData = {
-            title: formData.title,
-            description: formData.description,
-            location: formData.location,
-            owner: formData.owner,
-            picturesUrls: [formData.picture],
-            price: parseFloat(formData.price),
-            category: formData.category,
-            createdAt: new Date(formData.createdAt).toISOString()
-          };
-          console.log(transformedData)
-        
-          try {
-            await updateAd({
-              variables: {
-                data: transformedData,
-              },
-            });
-            toast.success("Ad has been successfully added!");
-            navigate("/"); 
-          } catch (err) {
-            console.error("Failed to create ad", err);
-            toast.error("An error occurred while creating the ad.");
-          }
-        };
-      
-  if (loading) return 'Submitting...';
-  if (error) return `Submission error! ${error.message}`;
+  const onSubmit: SubmitHandler<FormInputs> = async (formData) => {
+    const transformedData = {
+      id: data.getAdById.id,
+      title: formData.title,
+      description: formData.description,
+      location: formData.location,
+      owner: formData.owner,
+      // picturesUrls: [formData.picture],
+      price: parseFloat(formData.price),
+      category: formData.category,
+      createdAt: new Date(formData.createdAt).toISOString(),
+      tagIds: formData.tags.map((el) => parseFloat(el)) || [],
+    };
+    console.log(transformedData);
+
+    try {
+      await updateAd({
+        variables: {
+          data: transformedData,
+        },
+      });
+      toast.success("Ad has been successfully added!");
+      navigate("/");
+    } catch (err) {
+      console.error("Failed to create ad", err);
+      toast.error("An error occurred while creating the ad.");
+    }
+  };
+
+  if (loading && loadingCat && loadingTags) return "Submitting...";
+  if (error && errorCat && errorTags)
+    return `Submission error! ${error.message}`;
   if (!data || !data.getAdById) {
-  return <p>Chargement des données...</p>;
-}
-    return (
-      <div className="border-form">
-        <form onSubmit={handleSubmit(onSubmit)} className="newAdForm">
-          <div className="grid-container">
-            <div className="form-column">
-              <label>
-                Titre de l'annonce:
-                <br />
-                <input
-                  className="text-field-input"
-                  type="text"
-                  {...register("title", { required: true })}
-                />
-                {errors.title && (
-                  <span className="errorRed">Ce champ est requis</span>
-                )}
-              </label>
+    return <p>Chargement des données...</p>;
+  }
+  return (
+    <div className="border-form">
+      <form onSubmit={handleSubmit(onSubmit)} className="newAdForm">
+        <div className="grid-container">
+          <div className="form-column">
+            <label>
+              Titre de l'annonce:
               <br />
-              <label>
-                Description:
-                <br />
-                <input
-                  className="text-field-input"
-                  type="text"
-                  {...register("description", { required: true })}
-                />
-                {errors.description && (
-                  <span className="errorRed">Ce champ est requis</span>
-                )}
-              </label>
+              <input
+                className="text-field-input"
+                type="text"
+                {...register("title", { required: true })}
+              />
+              {errors.title && (
+                <span className="errorRed">Ce champ est requis</span>
+              )}
+            </label>
+            <br />
+            <label>
+              Description:
               <br />
-              <label>
-                Vendeur:
-                <br />
-                <input
-                  className="text-field-input"
-                  type="text"
-                  {...register("owner", { required: true })}
-                />
-                {errors.owner && (
-                  <span className="errorRed">Ce champ est requis</span>
-                )}
-              </label>
+              <input
+                className="text-field-input"
+                type="text"
+                {...register("description", { required: true })}
+              />
+              {errors.description && (
+                <span className="errorRed">Ce champ est requis</span>
+              )}
+            </label>
+            <br />
+            <label>
+              Vendeur:
               <br />
-              <label>
-                Prix:
-                <br />
-                <input
-                  className="text-field-input"
-                  type="number"
-                  {...register("price", { required: true })}
-                />
-                {errors.price && (
-                  <span className="errorRed">Ce champ est requis</span>
-                )}
-              </label>
+              <input
+                className="text-field-input"
+                type="text"
+                {...register("owner", { required: true })}
+              />
+              {errors.owner && (
+                <span className="errorRed">Ce champ est requis</span>
+              )}
+            </label>
+            <br />
+            <label>
+              Prix:
               <br />
-            </div>
-            <div className="form-column">
-              <label>
+              <input
+                className="text-field-input"
+                type="number"
+                {...register("price", { required: true })}
+              />
+              {errors.price && (
+                <span className="errorRed">Ce champ est requis</span>
+              )}
+            </label>
+            <br />
+          </div>
+          <div className="form-column">
+            {/* <label>
                 Image:
                 <br />
                 <input
@@ -158,39 +179,69 @@ const AdModification = () => {
                 {errors.picture && (
                   <span className="errorRed">Ce champ est requis</span>
                 )}
-              </label>
+              </label> */}
+            <br />
+            <label>
+              Ville:
               <br />
-              <label>
-                Ville:
-                <br />
-                <input
-                  className="text-field-input"
-                  type="text"
-                  {...register("location", { required: true })}
-                />
-                {errors.location && (
-                  <span className="errorRed">Ce champ est requis</span>
-                )}
-              </label>
+              <input
+                className="text-field-input"
+                type="text"
+                {...register("location", { required: true })}
+              />
+              {errors.location && (
+                <span className="errorRed">Ce champ est requis</span>
+              )}
+            </label>
+            <br />
+            <label>
+              Date:
               <br />
-              <label>
-                Date:
-                <br />
-                <input
-                  className="text-field"
-                  type="date"
-                  {...register("createdAt", { required: true })}
-                />
-                {errors.createdAt && (
-                  <span className="errorRed">Ce champ est requis</span>
-                )}
-              </label>
+              <input
+                className="text-field"
+                type="date"
+                {...register("createdAt", { required: true })}
+              />
+              {errors.createdAt && (
+                <span className="errorRed">Ce champ est requis</span>
+              )}
+            </label>
+            <br />
+            <select {...register("category", { required: true })}>
+              {dataCat?.getAllCategories.map((el) => (
+                <option key={el.id} value={el.id}>
+                  {el.title}
+                </option>
+              ))}
+            </select>
+            <br />
+            {errors.category && (
+              <span className="errorRed">Ce champ est requis</span>
+            )}
+            <div>
+              <label>Tags:</label>
+              <br />
+              {dataTags?.getAllTags.map((tag) => (
+                <div key={tag.id}>
+                  <input
+                    key={tag.id}
+                    type="checkbox"
+                    value={tag.id}
+                    defaultChecked={baseAd?.tag.some(
+                      (t: any) => t.id == tag.id
+                    )}
+                    {...register("tags")}
+                  />
+                  <label>{tag.title}</label>
+                </div>
+              ))}
             </div>
-            <button className="button sub">Submit</button>
           </div>
-        </form>
-      </div>
-    );
-  };
+          <button className="button sub">Submit</button>
+        </div>
+      </form>
+    </div>
+  );
+};
 
 export default AdModification;

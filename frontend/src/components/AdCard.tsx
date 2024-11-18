@@ -9,8 +9,8 @@ export interface AdCardProps {
   location: string;
   createdAt: string;
   owner: string;
-  category: { title: string; id: number };
-  tag: { title: string; id: number }[];
+  category: { title: string; id: number } | undefined | null;
+  tag: { title: string; id: number }[] | undefined | null;
 }
 
 function AdCard({ title, pictures, price, category, tag, id }: AdCardProps) {
@@ -19,7 +19,7 @@ function AdCard({ title, pictures, price, category, tag, id }: AdCardProps) {
     <div className="ad-card-container">
       <Link className="ad-card-link" to={`/ad/${id}`}>
         <div className="ad-card-text">
-          <div className="ad-card-category">{category.title}</div>
+          <div className="ad-card-category">{category?.title}</div>
           {tag && tag.length > 0
             ? tag.map((tag) => (
                 <span key={tag.id} className="ad-card-tag">
