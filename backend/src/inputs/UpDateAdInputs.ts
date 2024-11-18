@@ -25,9 +25,14 @@ class UpDateAdInputs implements Partial<Ad> {
   @Field({ nullable: true })
   createdAt?: Date;
 
+  @Field(() => [String], {nullable: true})
+  picturesUrls?: string[];
+
   @Field(() => ID, { nullable: true })
   category?: Category;
 
+  @Field(() => ID, { nullable: true })
+  tagIds?: number[];
 }
 
 export default UpDateAdInputs;
