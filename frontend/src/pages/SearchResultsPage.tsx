@@ -1,29 +1,24 @@
-import { useEffect, useState } from "react";
-import AdCard, { AdCardProps } from "../components/AdCard";
-import axios from "axios";
+import { useState } from "react";
+import AdCard from "../components/AdCard";
 import { useParams } from "react-router-dom";
+import { useGetAdsByKeywordQuery } from "../generated/graphql-types";
 
 function SearchResultPage() {
   const [total, setTotal] = useState(0);
   const { keyword } = useParams();
-  const [ads, setAds] = useState([] as AdCardProps[]);
 
-  useEffect(() => {
-    const fetchSearchResults = async () => {
-      try {
-        const result = await axios.get(
-          `http://localhost:3000/ad?title=${keyword}`
-        );
-        setAds(result.data);
-      } catch (err) {
-        console.log("error", err);
-      }
-    };
+  if (!keyword) {
+    return <p>Veuillez fournir un mot-clé valide.</p>;
+  }
 
-    fetchSearchResults();
-  }, [keyword]);
+  const { loading, error, data } = useGetAdsByKeywordQuery({
+    variables: { adTitle: keyword?.toString() },
+  });
 
-  console.log(keyword);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  console.log("data by keyword", data);
 
   return (
     <>
@@ -37,7 +32,7 @@ function SearchResultPage() {
         Vider total
       </button>
       <section className="recent-ads-search">
-        {ads.map((ad) => (
+        {data?.getAdsByKeyword.map((ad) => (
           <div key={ad.id}>
             <AdCard
               id={ad.id}

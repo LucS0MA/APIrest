@@ -1,27 +1,25 @@
-import { useEffect, useState } from "react";
-import AdCard, { AdCardProps } from "../components/AdCard";
-import axios from "axios";
+import { useState } from "react";
+import AdCard from "../components/AdCard";
 import { useParams } from "react-router-dom";
+import { useGetAdsByCategoryQuery } from "../generated/graphql-types";
 
 function SearchCategoryPage() {
   const [total, setTotal] = useState(0);
   const { keyword } = useParams();
-  const [ads, setAds] = useState([] as AdCardProps[]);
 
-  useEffect(() => {
-    const fetchSearchResultsCat = async () => {
-      try {
-        const result = await axios.get(
-          `http://localhost:3000/ad?category=${keyword}`
-        );
-        setAds(result.data);
-      } catch (err) {
-        console.log("error", err);
-      }
-    };
+  if (!keyword) {
+    return <p>Veuillez fournir un mot-clé valide.</p>;
+  }
+  
+  const { loading, error, data } = useGetAdsByCategoryQuery({
+    variables: { categoryTitle: keyword?.toString() },
+  });
 
-    fetchSearchResultsCat();
-  }, [keyword]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  console.log("data by category", data);
 
   console.log(keyword);
 
@@ -37,7 +35,7 @@ function SearchCategoryPage() {
         Vider total
       </button>
       <section className="recent-ads">
-        {ads.map((ad) => (
+        {data?.getAdsByCategory.map((ad) => (
           <div key={ad.id}>
             <AdCard
               id={ad.id}

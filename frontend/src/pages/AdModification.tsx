@@ -3,13 +3,13 @@ import { useParams } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { GET_AD_BY_ID } from "../graphql/queries";
-import { UPDATE_AD } from "../graphql/mutations";
-import { useMutation, useQuery } from "@apollo/client";
 import {
+  useGetAdByIdQuery,
   useGetAllCategoriesQuery,
   useGetAllTagsQuery,
+  useUpdateAdMutation,
 } from "../generated/graphql-types";
+import { GET_ALL_ADS } from "../graphql/queries";
 
 type FormInputs = {
   title: string;
@@ -18,8 +18,8 @@ type FormInputs = {
   owner: string;
   // picture: string;
   price: string;
-  category: number;
-  tags: string[];
+  category: string;
+  tag: string[];
   createdAt: string;
 };
 
@@ -36,18 +36,12 @@ const AdModification = () => {
     error: errorTags,
     data: dataTags,
   } = useGetAllTagsQuery();
-  const { loading, error, data } = useQuery(GET_AD_BY_ID, {
+  const { loading, error, data } = useGetAdByIdQuery({
     variables: { getAdByIdId: Number(id) },
   });
-  const [updateAd] = useMutation(UPDATE_AD);
+  const [updateAd] = useUpdateAdMutation({refetchQueries: [GET_ALL_ADS]});
 
-  console.log("data", data.getAdById.id);
-
-  // const reloadPage = () => {
-  //   window.location.reload();
-  // };
-
-  const baseAd = data.getAdById;
+  const baseAd = data?.getAdById;
   console.log("baseAd", baseAd);
 
   const {
@@ -63,16 +57,23 @@ const AdModification = () => {
       setValue("title", baseAd.title);
       setValue("description", baseAd.description);
       setValue("owner", baseAd.owner);
-      setValue("price", baseAd.price);
+      setValue("price", baseAd.price.toString());
       // setValue("picture", baseAd.picture);
       setValue("location", baseAd.location);
       setValue(
         "createdAt",
         new Date(baseAd.createdAt).toISOString().slice(0, 10)
       );
-      setValue("category", baseAd.category.id);
+      if (baseAd.category?.id) {
+        setValue("category", baseAd.category.id.toString());
+      }
     }
   }, [data, setValue]);
+
+  if (!data?.getAdById?.id) {
+    toast.error("ID is missing or invalid.");
+    return;
+  }
 
   const onSubmit: SubmitHandler<FormInputs> = async (formData) => {
     const transformedData = {
@@ -85,9 +86,9 @@ const AdModification = () => {
       price: parseFloat(formData.price),
       category: formData.category,
       createdAt: new Date(formData.createdAt).toISOString(),
-      tagIds: formData.tags.map((el) => parseFloat(el)) || [],
+      tag: formData.tag ? formData.tag.map((el) => ({ id: parseInt(el) })) : [],
     };
-    console.log(transformedData);
+    console.log("dataforbackend", transformedData);
 
     try {
       await updateAd({
@@ -227,10 +228,10 @@ const AdModification = () => {
                     key={tag.id}
                     type="checkbox"
                     value={tag.id}
-                    defaultChecked={baseAd?.tag.some(
+                    defaultChecked={baseAd?.tag ? baseAd?.tag.some(
                       (t: any) => t.id == tag.id
-                    )}
-                    {...register("tags")}
+                    ) : false}
+                    {...register("tag")}
                   />
                   <label>{tag.title}</label>
                 </div>

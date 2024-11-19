@@ -11,6 +11,7 @@ import SearchCategoryPage from "./pages/SearchCategoryPage";
 import AdModification from "./pages/AdModification";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UpdateAdPage from "./pages/UpdateAdPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/ad/:id" element={<AdDetails />} />
           <Route path="/ad/new" element={<NewAdForm />} />
+          <Route path="/ad/update/:id" element={<UpdateAdPage />} />
           <Route path="/category/new" element={<NewCategoryForm />} />
           <Route path="/searchAd/:keyword" element={<SearchResultPage />} />
           <Route path="/searchCat/:keyword" element={<SearchCategoryPage />} />

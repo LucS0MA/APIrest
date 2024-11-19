@@ -107,6 +107,8 @@ export type PictureInput = {
 export type Query = {
   __typename?: 'Query';
   getAdById: Ad;
+  getAdsByCategory: Array<Ad>;
+  getAdsByKeyword: Array<Ad>;
   getAllAds: Array<Ad>;
   getAllCategories: Array<Category>;
   getAllTags: Array<Tag>;
@@ -117,6 +119,16 @@ export type Query = {
 
 export type QueryGetAdByIdArgs = {
   id: Scalars['Float']['input'];
+};
+
+
+export type QueryGetAdsByCategoryArgs = {
+  categoryTitle: Scalars['String']['input'];
+};
+
+
+export type QueryGetAdsByKeywordArgs = {
+  adTitle: Scalars['String']['input'];
 };
 
 
@@ -199,6 +211,20 @@ export type GetAllTagsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetAllTagsQuery = { __typename?: 'Query', getAllTags: Array<{ __typename?: 'Tag', id: number, title: string }> };
+
+export type GetAdsByKeywordQueryVariables = Exact<{
+  adTitle: Scalars['String']['input'];
+}>;
+
+
+export type GetAdsByKeywordQuery = { __typename?: 'Query', getAdsByKeyword: Array<{ __typename?: 'Ad', id: number, title: string, description: string, owner: string, price: number, location: string, createdAt: any, pictures: Array<{ __typename?: 'Picture', id: number, url: string }>, category?: { __typename?: 'Category', id: number, title: string } | null, tag?: Array<{ __typename?: 'Tag', id: number, title: string }> | null }> };
+
+export type GetAdsByCategoryQueryVariables = Exact<{
+  categoryTitle: Scalars['String']['input'];
+}>;
+
+
+export type GetAdsByCategoryQuery = { __typename?: 'Query', getAdsByCategory: Array<{ __typename?: 'Ad', id: number, title: string, description: string, owner: string, price: number, location: string, createdAt: any, pictures: Array<{ __typename?: 'Picture', id: number, url: string }>, category?: { __typename?: 'Category', id: number, title: string } | null, tag?: Array<{ __typename?: 'Tag', id: number, title: string }> | null }> };
 
 
 export const CreateAdDocument = gql`
@@ -497,3 +523,119 @@ export type GetAllTagsQueryHookResult = ReturnType<typeof useGetAllTagsQuery>;
 export type GetAllTagsLazyQueryHookResult = ReturnType<typeof useGetAllTagsLazyQuery>;
 export type GetAllTagsSuspenseQueryHookResult = ReturnType<typeof useGetAllTagsSuspenseQuery>;
 export type GetAllTagsQueryResult = Apollo.QueryResult<GetAllTagsQuery, GetAllTagsQueryVariables>;
+export const GetAdsByKeywordDocument = gql`
+    query GetAdsByKeyword($adTitle: String!) {
+  getAdsByKeyword(adTitle: $adTitle) {
+    id
+    title
+    description
+    owner
+    price
+    pictures {
+      id
+      url
+    }
+    location
+    createdAt
+    category {
+      id
+      title
+    }
+    tag {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAdsByKeywordQuery__
+ *
+ * To run a query within a React component, call `useGetAdsByKeywordQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAdsByKeywordQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAdsByKeywordQuery({
+ *   variables: {
+ *      adTitle: // value for 'adTitle'
+ *   },
+ * });
+ */
+export function useGetAdsByKeywordQuery(baseOptions: Apollo.QueryHookOptions<GetAdsByKeywordQuery, GetAdsByKeywordQueryVariables> & ({ variables: GetAdsByKeywordQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAdsByKeywordQuery, GetAdsByKeywordQueryVariables>(GetAdsByKeywordDocument, options);
+      }
+export function useGetAdsByKeywordLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAdsByKeywordQuery, GetAdsByKeywordQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAdsByKeywordQuery, GetAdsByKeywordQueryVariables>(GetAdsByKeywordDocument, options);
+        }
+export function useGetAdsByKeywordSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAdsByKeywordQuery, GetAdsByKeywordQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAdsByKeywordQuery, GetAdsByKeywordQueryVariables>(GetAdsByKeywordDocument, options);
+        }
+export type GetAdsByKeywordQueryHookResult = ReturnType<typeof useGetAdsByKeywordQuery>;
+export type GetAdsByKeywordLazyQueryHookResult = ReturnType<typeof useGetAdsByKeywordLazyQuery>;
+export type GetAdsByKeywordSuspenseQueryHookResult = ReturnType<typeof useGetAdsByKeywordSuspenseQuery>;
+export type GetAdsByKeywordQueryResult = Apollo.QueryResult<GetAdsByKeywordQuery, GetAdsByKeywordQueryVariables>;
+export const GetAdsByCategoryDocument = gql`
+    query GetAdsByCategory($categoryTitle: String!) {
+  getAdsByCategory(categoryTitle: $categoryTitle) {
+    id
+    title
+    description
+    owner
+    price
+    pictures {
+      id
+      url
+    }
+    location
+    createdAt
+    category {
+      id
+      title
+    }
+    tag {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAdsByCategoryQuery__
+ *
+ * To run a query within a React component, call `useGetAdsByCategoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAdsByCategoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAdsByCategoryQuery({
+ *   variables: {
+ *      categoryTitle: // value for 'categoryTitle'
+ *   },
+ * });
+ */
+export function useGetAdsByCategoryQuery(baseOptions: Apollo.QueryHookOptions<GetAdsByCategoryQuery, GetAdsByCategoryQueryVariables> & ({ variables: GetAdsByCategoryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAdsByCategoryQuery, GetAdsByCategoryQueryVariables>(GetAdsByCategoryDocument, options);
+      }
+export function useGetAdsByCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAdsByCategoryQuery, GetAdsByCategoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAdsByCategoryQuery, GetAdsByCategoryQueryVariables>(GetAdsByCategoryDocument, options);
+        }
+export function useGetAdsByCategorySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAdsByCategoryQuery, GetAdsByCategoryQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAdsByCategoryQuery, GetAdsByCategoryQueryVariables>(GetAdsByCategoryDocument, options);
+        }
+export type GetAdsByCategoryQueryHookResult = ReturnType<typeof useGetAdsByCategoryQuery>;
+export type GetAdsByCategoryLazyQueryHookResult = ReturnType<typeof useGetAdsByCategoryLazyQuery>;
+export type GetAdsByCategorySuspenseQueryHookResult = ReturnType<typeof useGetAdsByCategorySuspenseQuery>;
+export type GetAdsByCategoryQueryResult = Apollo.QueryResult<GetAdsByCategoryQuery, GetAdsByCategoryQueryVariables>;
