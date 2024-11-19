@@ -40,7 +40,7 @@ export type AdInputs = {
   owner: Scalars['String']['input'];
   pictures?: InputMaybe<Array<PictureInput>>;
   price: Scalars['Float']['input'];
-  tags?: InputMaybe<Array<TagInput>>;
+  tag?: InputMaybe<Array<TagInput>>;
   title: Scalars['String']['input'];
 };
 

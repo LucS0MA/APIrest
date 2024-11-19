@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDeleteAdMutation, useGetAdByIdQuery } from "../generated/graphql-types";
+import { GET_ALL_ADS } from "../graphql/queries";
 
 
 function AdDetails() {
@@ -11,12 +12,8 @@ function AdDetails() {
   const { loading, error, data } = useGetAdByIdQuery({
     variables: { getAdByIdId: Number(id) },
   });
-  const [deleteAdMutation] = useDeleteAdMutation();
+  const [deleteAdMutation] = useDeleteAdMutation({refetchQueries: [GET_ALL_ADS]});
 
-  const reloadPage = () => {
-    window.location.reload();
-  };
-  
   const deleteAd = async () => {
     try {
       await deleteAdMutation({
@@ -25,7 +22,6 @@ function AdDetails() {
       toast.success("Ad has been deleted");
       navigate("/");
       setAdDeleted(true);
-      reloadPage();
     } catch (err) {
       console.error("Error during ad deletion:", err);
       toast.error("Error has been detected");

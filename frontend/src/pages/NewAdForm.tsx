@@ -1,12 +1,12 @@
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@apollo/client";
-import { CREATE_AD } from "../graphql/mutations";
 import {
+  useCreateAdMutation,
   useGetAllCategoriesQuery,
   useGetAllTagsQuery,
 } from "../generated/graphql-types";
+import { GET_ALL_ADS } from "../graphql/queries";
 
 type FormInputs = {
   title: string;
@@ -28,7 +28,7 @@ const NewAdFormPage = () => {
     error: errorTags,
     data: dataTags,
   } = useGetAllTagsQuery();
-  const [createAd] = useMutation(CREATE_AD);
+  const [createAd] = useCreateAdMutation({refetchQueries: [GET_ALL_ADS]});
 
   console.log("datatags", dataTags);
 
