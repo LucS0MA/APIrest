@@ -2,6 +2,7 @@ import AdInputs from "../inputs/AdInputs";
 import { Ad } from "../entities/Ad";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import UpDateAdInputs from "../inputs/UpDateAdInputs";
+import { Like } from "typeorm";
 
 @Resolver(Ad)
 class AdResolver {
@@ -16,6 +17,28 @@ class AdResolver {
       },
     });
     return ads;
+  }
+
+  @Query(() => [Ad])
+  async getAdsByKeyword(@Arg("adTitle") adTitle: string) {
+    const adsByadTitle = await Ad.find({
+      where: {
+        title: Like(`%${adTitle}%`),
+      },
+    });
+    return adsByadTitle;
+  }
+
+  @Query(() => [Ad])
+  async getAdsByCategory(@Arg("categoryTitle") categoryTitle: string) {
+    const adsByCategory = await Ad.find({
+      where: {
+        category: {
+          title: categoryTitle
+        },
+      },
+    });
+    return adsByCategory;
   }
 
   @Query(() => Ad)
