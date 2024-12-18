@@ -1,280 +1,35 @@
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import {
   useGetAdByIdQuery,
-  useGetAllCategoriesQuery,
-  useGetAllTagsQuery,
   useUpdateAdMutation,
 } from "../generated/graphql-types";
 import { GET_ALL_ADS } from "../graphql/queries";
-
-type FormInputs = {
-  title: string;
-  description: string;
-  location: string;
-  owner: string;
-  picture: { url: string }[];
-  price: string;
-  category: string;
-  tag: string[];
-  createdAt: string;
-};
+import CreateOrUpdateAdForm from "../components/CreateOrUpdateAdForm";
 
 const AdModification = () => {
-  const navigate = useNavigate();
   const { id } = useParams();
-  const {
-    loading: loadingCat,
-    error: errorCat,
-    data: dataCat,
-  } = useGetAllCategoriesQuery();
-  const {
-    loading: loadingTags,
-    error: errorTags,
-    data: dataTags,
-  } = useGetAllTagsQuery();
-  const { loading, error, data } = useGetAdByIdQuery({
-    variables: { getAdByIdId: Number(id) },
+  const { data, error, loading } = useGetAdByIdQuery({
+    variables: { getAdByIdId: parseInt(id as string) },
   });
-  const [updateAd] = useUpdateAdMutation({ refetchQueries: [GET_ALL_ADS] });
-
-  const baseAd = data?.getAdById;
-  console.log("baseAd", baseAd);
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm<FormInputs>();
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "picture",
+  const [updateAdById] = useUpdateAdMutation({
+    refetchQueries: [GET_ALL_ADS],
   });
-
-  useEffect(() => {
-    if (data && data.getAdById) {
-      const baseAd = data.getAdById;
-      setValue("title", baseAd.title);
-      setValue("description", baseAd.description);
-      setValue("owner", baseAd.owner);
-      setValue("price", baseAd.price.toString());
-      setValue("picture", baseAd.pictures);
-      setValue("location", baseAd.location);
-      setValue(
-        "createdAt",
-        new Date(baseAd.createdAt).toISOString().slice(0, 10)
-      );
-      if (baseAd.category?.id) {
-        setValue("category", baseAd.category.id.toString());
-      }
-    }
-  }, [data, setValue]);
-
-  if (!data?.getAdById?.id) {
-    toast.error("ID is missing or invalid.");
-    return;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
+  if (data) {
+    console.log("data", data);
+    return (
+      <CreateOrUpdateAdForm
+        defaultValues={{
+          ...data.getAdById,
+          createdAt: data.getAdById.createdAt.slice(0, 10),
+          category: data.getAdById?.category?.id,
+          tag: data.getAdById?.tag?.map((t: any) => t.id.toString()),
+        }}
+        submitToBackend={updateAdById}
+      />
+    );
   }
-
-  const onSubmit: SubmitHandler<FormInputs> = async (formData) => {
-    // Transforme `formData.tag` en tableau, même s'il contient une seule valeur
-    const tags = Array.isArray(formData.tag) ? formData.tag : [formData.tag];
-    const cleanedPictures = formData.picture.map(({ url }) => ({ url }));
-  
-    const transformedData = {
-      id: data.getAdById.id,
-      title: formData.title,
-      description: formData.description,
-      location: formData.location,
-      owner: formData.owner,
-      pictures: cleanedPictures,
-      price: parseFloat(formData.price),
-      category: formData.category,
-      createdAt: new Date(formData.createdAt).toISOString(),
-      tag: tags.map((el) => ({ id: parseInt(el) })), // Pas d'erreur ici
-    };
-  
-    console.log("dataforbackend", transformedData);
-  
-    try {
-      await updateAd({
-        variables: {
-          data: transformedData,
-        },
-      });
-      toast.success("Ad has been successfully added!");
-      navigate("/");
-    } catch (err) {
-      console.error("Failed to create ad", err);
-      toast.error("An error occurred while creating the ad.");
-    }
-  };
-
-  if (loading && loadingCat && loadingTags) return "Submitting...";
-  if (error && errorCat && errorTags)
-    return `Submission error! ${error.message}`;
-  if (!data || !data.getAdById) {
-    return <p>Chargement des données...</p>;
-  }
-  return (
-    <div className="border-form">
-      <form onSubmit={handleSubmit(onSubmit)} className="newAdForm">
-        <div className="grid-container">
-          <div className="form-column">
-            <label>
-              Titre de l'annonce:
-              <br />
-              <input
-                className="text-field-input"
-                type="text"
-                {...register("title", { required: true })}
-              />
-              {errors.title && (
-                <span className="errorRed">Ce champ est requis</span>
-              )}
-            </label>
-            <br />
-            <label>
-              Description:
-              <br />
-              <input
-                className="text-field-input"
-                type="text"
-                {...register("description", { required: true })}
-              />
-              {errors.description && (
-                <span className="errorRed">Ce champ est requis</span>
-              )}
-            </label>
-            <br />
-            <label>
-              Vendeur:
-              <br />
-              <input
-                className="text-field-input"
-                type="text"
-                {...register("owner", { required: true })}
-              />
-              {errors.owner && (
-                <span className="errorRed">Ce champ est requis</span>
-              )}
-            </label>
-            <br />
-            <label>
-              Prix:
-              <br />
-              <input
-                className="text-field-input"
-                type="number"
-                {...register("price", { required: true })}
-              />
-              {errors.price && (
-                <span className="errorRed">Ce champ est requis</span>
-              )}
-            </label>
-            <br />
-          </div>
-          <div className="form-column">
-            <br />
-            <button
-              className="button"
-              type="button"
-              onClick={() => append({ url: "" })}
-            >
-              Add Image
-            </button>
-            <br />
-            <div className="field">
-              {fields.map((field, index) => {
-                return (
-                  <div key={field.id}>
-                    <section className="image-input-and-remove">
-                      <input
-                        className="text-field"
-                        placeholder="Your image url"
-                        {...register(`picture.${index}.url` as const)}
-                      />
-                      <button className="button" onClick={() => remove(index)}>
-                        Remove
-                      </button>
-                      <br />
-                    </section>
-                    <span>{errors.picture?.[index]?.url?.message}</span>
-                  </div>
-                );
-              })}
-            </div>
-            <br />
-            <label>
-              Ville:
-              <br />
-              <input
-                className="text-field-input"
-                type="text"
-                {...register("location", { required: true })}
-              />
-              {errors.location && (
-                <span className="errorRed">Ce champ est requis</span>
-              )}
-            </label>
-            <br />
-            <label>
-              Date:
-              <br />
-              <input
-                className="text-field"
-                type="date"
-                {...register("createdAt", { required: true })}
-              />
-              {errors.createdAt && (
-                <span className="errorRed">Ce champ est requis</span>
-              )}
-            </label>
-            <br />
-            <select {...register("category", { required: true })}>
-              {dataCat?.getAllCategories.map((el) => (
-                <option key={el.id} value={el.id}>
-                  {el.title}
-                </option>
-              ))}
-            </select>
-            <br />
-            {errors.category && (
-              <span className="errorRed">Ce champ est requis</span>
-            )}
-            <div>
-              <label>Tags:</label>
-              <br />
-              {dataTags?.getAllTags.map((tag) => (
-                <div key={tag.id}>
-                  <input
-                    type="checkbox"
-                    value={tag.id}
-                    defaultChecked={
-                      baseAd?.tag
-                        ? baseAd.tag.some((t: any) => t.id == tag.id)
-                        : false
-                    }
-                    {...register("tag", {
-                      setValueAs: (value) =>
-                        Array.isArray(value) ? value : [value],
-                    })}
-                  />
-                  <label>{tag.title}</label>
-                </div>
-              ))}
-            </div>
-          </div>
-          <button className="button sub">Submit</button>
-        </div>
-      </form>
-    </div>
-  );
 };
 
 export default AdModification;

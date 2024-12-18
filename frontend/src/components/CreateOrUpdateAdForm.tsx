@@ -31,7 +31,7 @@ const CreateOrUpdateAdForm = ({
     description: string;
     owner: string;
     price: string;
-    picture: { url: string; __typename?: string }[];
+    pictures: { url: string }[];
     location: string;
     createdAt: string;
     category: string;
@@ -51,20 +51,23 @@ const CreateOrUpdateAdForm = ({
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "picture",
+    name: "pictures",
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const tags = Array.isArray(data.tag) ? data.tag : [data.tag];
+    const cleanedPictures = data.pictures.map(({ url }) => ({ url }));
     console.log("data from react hook form", data);
     delete data.__typename;
-    data.picture = data.picture.map((el) => {
+    data.pictures = data.pictures.map((el) => {
       return { url: el.url };
     });
     const dataForBackend = {
       ...data,
       price: parseInt(data.price),
+      pictures: cleanedPictures,
       createdAt: data.createdAt + "T00:00:00.000Z",
-      tags: data.tag ? data.tag.map((el) => ({ id: parseInt(el) })) : [],
+      tag: tags.map((el) => ({ id: parseInt(el) })),
     };
 
     // console.log("data for backend", dataForBackend);
@@ -224,14 +227,14 @@ const CreateOrUpdateAdForm = ({
                       <input
                         className="text-field"
                         placeholder="Your image url"
-                        {...register(`picture.${index}.url` as const)}
+                        {...register(`pictures.${index}.url` as const)}
                       />
                       <button className="button" onClick={() => remove(index)}>
                         Remove
                       </button>
                       <br />
                     </section>
-                    <span>{errors.picture?.[index]?.url?.message}</span>
+                    <span>{errors.pictures?.[index]?.url?.message}</span>
                   </div>
                 );
               })}
@@ -337,7 +340,6 @@ const CreateOrUpdateAdForm = ({
               </label>
             ))}
           </>
-
           <input type="submit" className="button" />
         </form>
       </>
