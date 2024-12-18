@@ -1,7 +1,6 @@
 services:
   backend:
     environment:
-      - WDS_SOCKET_PORT= 4000
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true 
     build: ./backend
@@ -14,9 +13,11 @@ services:
       interval: 1s
       timeout: 2s
       retries: 100
+    depends_on:
+      db:
+        condition: service_healthy
   frontend:
     environment:
-      - WDS_SOCKET_PORT= 5173
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true 
     build: ./frontend
@@ -26,4 +27,22 @@ services:
       - ./frontend/src:/app/src
     depends_on:
       backend:
+        condition: service_healthy
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+      interval: 1s
+      timeout: 2s
+      retries: 100
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
         condition: service_healthy
