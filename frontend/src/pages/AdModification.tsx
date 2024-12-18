@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import {
@@ -16,7 +16,7 @@ type FormInputs = {
   description: string;
   location: string;
   owner: string;
-  // picture: string;
+  picture: { url: string }[];
   price: string;
   category: string;
   tag: string[];
@@ -39,7 +39,7 @@ const AdModification = () => {
   const { loading, error, data } = useGetAdByIdQuery({
     variables: { getAdByIdId: Number(id) },
   });
-  const [updateAd] = useUpdateAdMutation({refetchQueries: [GET_ALL_ADS]});
+  const [updateAd] = useUpdateAdMutation({ refetchQueries: [GET_ALL_ADS] });
 
   const baseAd = data?.getAdById;
   console.log("baseAd", baseAd);
@@ -48,8 +48,14 @@ const AdModification = () => {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
   } = useForm<FormInputs>();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "picture",
+  });
 
   useEffect(() => {
     if (data && data.getAdById) {
@@ -58,7 +64,7 @@ const AdModification = () => {
       setValue("description", baseAd.description);
       setValue("owner", baseAd.owner);
       setValue("price", baseAd.price.toString());
-      // setValue("picture", baseAd.picture);
+      setValue("picture", baseAd.pictures);
       setValue("location", baseAd.location);
       setValue(
         "createdAt",
@@ -76,20 +82,25 @@ const AdModification = () => {
   }
 
   const onSubmit: SubmitHandler<FormInputs> = async (formData) => {
+    // Transforme `formData.tag` en tableau, même s'il contient une seule valeur
+    const tags = Array.isArray(formData.tag) ? formData.tag : [formData.tag];
+    const cleanedPictures = formData.picture.map(({ url }) => ({ url }));
+  
     const transformedData = {
       id: data.getAdById.id,
       title: formData.title,
       description: formData.description,
       location: formData.location,
       owner: formData.owner,
-      // picturesUrls: [formData.picture],
+      pictures: cleanedPictures,
       price: parseFloat(formData.price),
       category: formData.category,
       createdAt: new Date(formData.createdAt).toISOString(),
-      tag: formData.tag ? formData.tag.map((el) => ({ id: parseInt(el) })) : [],
+      tag: tags.map((el) => ({ id: parseInt(el) })), // Pas d'erreur ici
     };
+  
     console.log("dataforbackend", transformedData);
-
+  
     try {
       await updateAd({
         variables: {
@@ -169,18 +180,35 @@ const AdModification = () => {
             <br />
           </div>
           <div className="form-column">
-            {/* <label>
-                Image:
-                <br />
-                <input
-                  className="text-field-input"
-                  type="text"
-                  {...register("picture", { required: true })}
-                />
-                {errors.picture && (
-                  <span className="errorRed">Ce champ est requis</span>
-                )}
-              </label> */}
+            <br />
+            <button
+              className="button"
+              type="button"
+              onClick={() => append({ url: "" })}
+            >
+              Add Image
+            </button>
+            <br />
+            <div className="field">
+              {fields.map((field, index) => {
+                return (
+                  <div key={field.id}>
+                    <section className="image-input-and-remove">
+                      <input
+                        className="text-field"
+                        placeholder="Your image url"
+                        {...register(`picture.${index}.url` as const)}
+                      />
+                      <button className="button" onClick={() => remove(index)}>
+                        Remove
+                      </button>
+                      <br />
+                    </section>
+                    <span>{errors.picture?.[index]?.url?.message}</span>
+                  </div>
+                );
+              })}
+            </div>
             <br />
             <label>
               Ville:
@@ -225,13 +253,17 @@ const AdModification = () => {
               {dataTags?.getAllTags.map((tag) => (
                 <div key={tag.id}>
                   <input
-                    key={tag.id}
                     type="checkbox"
                     value={tag.id}
-                    defaultChecked={baseAd?.tag ? baseAd?.tag.some(
-                      (t: any) => t.id == tag.id
-                    ) : false}
-                    {...register("tag")}
+                    defaultChecked={
+                      baseAd?.tag
+                        ? baseAd.tag.some((t: any) => t.id == tag.id)
+                        : false
+                    }
+                    {...register("tag", {
+                      setValueAs: (value) =>
+                        Array.isArray(value) ? value : [value],
+                    })}
                   />
                   <label>{tag.title}</label>
                 </div>

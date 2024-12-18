@@ -213,7 +213,9 @@ export type GetAdByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetAdByIdQuery = { __typename?: 'Query', getAdById: { __typename?: 'Ad', id: number, title: string, owner: string, description: string, price: number, location: string, createdAt: any, pictures: Array<{ __typename?: 'Picture', id: number, url: string }>, category?: { __typename?: 'Category', id: number, title: string } | null, tag?: Array<{ __typename?: 'Tag', id: number, title: string }> | null } };
+export type GetAdByIdQuery = { __typename?: 'Query', getAdById: {
+  picture: string; __typename?: 'Ad', id: number, title: string, owner: string, description: string, price: number, location: string, createdAt: any, pictures: Array<{ __typename?: 'Picture', id: number, url: string }>, category?: { __typename?: 'Category', id: number, title: string } | null, tag?: Array<{ __typename?: 'Tag', id: number, title: string }> | null 
+} };
 
 export type GetAllTagsQueryVariables = Exact<{ [key: string]: never; }>;
 

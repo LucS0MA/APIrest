@@ -2,7 +2,7 @@ import AdInputs from "../inputs/AdInputs";
 import { Ad } from "../entities/Ad";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import UpDateAdInputs from "../inputs/UpDateAdInputs";
-import { Like } from "typeorm";
+import { ILike } from "typeorm";
 
 @Resolver(Ad)
 class AdResolver {
@@ -23,7 +23,7 @@ class AdResolver {
   async getAdsByKeyword(@Arg("adTitle") adTitle: string) {
     const adsByadTitle = await Ad.find({
       where: {
-        title: Like(`%${adTitle}%`),
+        title: ILike(`%${adTitle}%`),
       },
     });
     return adsByadTitle;
