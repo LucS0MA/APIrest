@@ -87,7 +87,8 @@ const CreateOrUpdateAdForm = ({
   if (dataTags && dataCat) {
     return (
       <>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="adForm">
+          <div className="formColumn">
           <>
             <label>
               Titre de l'annonce:
@@ -240,7 +241,9 @@ const CreateOrUpdateAdForm = ({
               })}
             </div>
           </>
+          </div>
           <br />
+          <div className="formColumn">
           <>
             <label>
               Ville :
@@ -334,13 +337,14 @@ const CreateOrUpdateAdForm = ({
           <br />
           <>
             {dataTags.getAllTags.map((tag) => (
-              <label key={tag.id}>
-                <input type="checkbox" value={tag.id} {...register("tag")} />
+              <label key={tag.id} className="tagsContainer">
+                <input type="checkbox" value={tag.id} {...register("tag")} className="tags"/>
                 {tag.title}
               </label>
             ))}
           </>
-          <input type="submit" className="button" />
+          <input type="submit" className="button adSub" />
+          </div>
         </form>
       </>
     );
