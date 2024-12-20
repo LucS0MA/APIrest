@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useDeleteAdMutation, useGetAdByIdQuery } from "../generated/graphql-types";
+import {
+  useDeleteAdMutation,
+  useGetAdByIdQuery,
+} from "../generated/graphql-types";
 import { GET_ALL_ADS } from "../graphql/queries";
-
 
 function AdDetails() {
   const navigate = useNavigate();
@@ -12,7 +14,9 @@ function AdDetails() {
   const { loading, error, data } = useGetAdByIdQuery({
     variables: { getAdByIdId: Number(id) },
   });
-  const [deleteAdMutation] = useDeleteAdMutation({refetchQueries: [GET_ALL_ADS]});
+  const [deleteAdMutation] = useDeleteAdMutation({
+    refetchQueries: [GET_ALL_ADS],
+  });
 
   const deleteAd = async () => {
     try {
@@ -33,7 +37,7 @@ function AdDetails() {
 
   const adDetail = data?.getAdById;
 
-  console.log(adDetail)
+  console.log(adDetail);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -57,14 +61,28 @@ function AdDetails() {
             <section className="ad-details">
               <div className="ad-details-image-container">
                 {adDetail.pictures && adDetail.pictures.length > 0 ? (
-                  adDetail.pictures.map((el) => (
+                  <>
+                    {/* Première image en grand */}
                     <img
-                      key={el.id}
                       className="ad-details-image"
-                      src={el.url}
-                      alt={el.url}
+                      src={adDetail.pictures[0].url}
+                      alt={adDetail.pictures[0].url}
                     />
-                  ))
+
+                    {/* Container pour les miniatures */}
+                    {adDetail.pictures.length > 1 && (
+                      <div className="thumbnails-container">
+                        {adDetail.pictures.slice(1).map((el) => (
+                          <img
+                            key={el.id}
+                            className="thumbnail"
+                            src={el.url}
+                            alt={el.url}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <p>No image available</p>
                 )}

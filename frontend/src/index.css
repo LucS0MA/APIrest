@@ -61,6 +61,7 @@ h1 {
   color: #ffa41b;
   background-color: white;
   cursor: pointer;
+  transition: all 0.2s ease-out;
 }
 
 .button.sub {
@@ -69,6 +70,11 @@ h1 {
 }
 
 .button.sub:hover {
+  background-color: #ffa41b;
+  color: white;
+}
+
+.button:hover {
   background-color: #ffa41b;
   color: white;
 }
@@ -181,6 +187,15 @@ h1 {
 }
 
 .adSub {
+  background-color: #ffa41b;
+  color: white;
+  margin-top: 15px;
+  width: 60%;
+}
+
+.adSub:hover {
+  background-color: #e48902;
+  color: white;
   margin-top: 15px;
 }
 
@@ -191,7 +206,7 @@ h1 {
   flex-direction: row;
   justify-content: center;
   padding: 20px;
-  gap: 5em;
+  gap: 2.5em;
   background-color: white;
 }
 
@@ -255,6 +270,57 @@ h1 {
 
 .ad-card-title {
   font-weight: bold;
+}
+
+.ad-details-image-container {
+  margin-inline-start: -24px;
+  margin-inline-end: -24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Style pour l'image principale */
+.ad-details-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Style pour les images miniatures */
+.thumbnails-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0 5px;
+}
+
+.pictures-field {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 15px;
+}
+
+.image-input-and-remove {
+  gap: 15px;
+  display: flex;
+}
+
+.previsual {
+  border: 2px solid #da8302;
+  border-radius: 10px;
+  width: 100px;
+  height: 100px;
+}
+
+.thumbnail {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  cursor: pointer;
 }
 
 .ad-details-image-container {
