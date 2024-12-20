@@ -12,6 +12,7 @@ import AdModification from "./pages/AdModification";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UpdateAdPage from "./pages/UpdateAdPage";
+import SingleFileUploader from "./pages/TestFileUpload";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/searchAd/:keyword" element={<SearchResultPage />} />
           <Route path="/searchCat/:keyword" element={<SearchCategoryPage />} />
           <Route path="/ad/modif/:id" element={<AdModification />} />
+          <Route path="testimg" element={<SingleFileUploader />} />
         </Route>
       </Routes>
       <ToastContainer theme="colored" position="bottom-right" />
