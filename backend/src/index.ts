@@ -5,12 +5,13 @@ import { buildSchema } from "type-graphql";
 import AdResolver from "./resolvers/AdResolvers";
 import CategoryResolvers from "./resolvers/CategoryResolvers";
 import TagResolvers from "./resolvers/TagResolvers";
+import UserResolvers from "./resolvers/UserResolvers";
 
 const start = async () => {
   await dataSourceGoodCorner.initialize();
 
   const schema = await buildSchema({
-    resolvers: [AdResolver, CategoryResolvers, TagResolvers],
+    resolvers: [AdResolver, CategoryResolvers, TagResolvers, UserResolvers],
   });
 
   const server = new ApolloServer({
