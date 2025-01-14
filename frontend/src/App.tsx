@@ -3,6 +3,7 @@ import "./App.css";
 import Layout from "./pages/Layout";
 import About from "./pages/About";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
 import AdDetails from "./pages/AdDetails";
 import NewAdForm from "./pages/NewAdForm";
 import NewCategoryForm from "./pages/NewCategoryForm";
@@ -29,6 +30,7 @@ function App() {
           <Route path="/searchCat/:keyword" element={<SearchCategoryPage />} />
           <Route path="/ad/modif/:id" element={<AdModification />} />
           <Route path="testimg" element={<SingleFileUploader />} />
+          <Route path="/login" element={<Login />} />
         </Route>
       </Routes>
       <ToastContainer theme="colored" position="bottom-right" />

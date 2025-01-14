@@ -71,52 +71,59 @@ export const GET_ALL_TAGS = gql`
 `;
 
 export const GET_ADS_BY_KEYWORD = gql`
-query GetAdsByKeyword($adTitle: String!) {
-  getAdsByKeyword(adTitle: $adTitle) {
-    id
-    title
-    description
-    owner
-    price
-    pictures {
-      id
-      url
-    }
-    location
-    createdAt
-    category {
+  query GetAdsByKeyword($adTitle: String!) {
+    getAdsByKeyword(adTitle: $adTitle) {
       id
       title
-    }
-    tag {
-      id
-      title
+      description
+      owner
+      price
+      pictures {
+        id
+        url
+      }
+      location
+      createdAt
+      category {
+        id
+        title
+      }
+      tag {
+        id
+        title
+      }
     }
   }
-}
 `;
 
-export const GET_ADS_BY_CATEGORY = gql `
-query GetAdsByCategory($categoryTitle: String!) {
-  getAdsByCategory(categoryTitle: $categoryTitle) {
-    id
-    title
-    description
-    owner
-    price
-    pictures {
-      id
-      url
-    }
-    location
-    createdAt
-    category {
+export const GET_ADS_BY_CATEGORY = gql`
+  query GetAdsByCategory($categoryTitle: String!) {
+    getAdsByCategory(categoryTitle: $categoryTitle) {
       id
       title
-    }
-    tag {
-      id
-      title
+      description
+      owner
+      price
+      pictures {
+        id
+        url
+      }
+      location
+      createdAt
+      category {
+        id
+        title
+      }
+      tag {
+        id
+        title
+      }
     }
   }
-}`
+`;
+
+export const LOGIN = gql`
+  query Login($data: UserInputs!) {
+    login(data: $data)
+  }
+`;
